@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         id="WebApp_ID" version="4.0">
+  
+  <display-name>Anti-Malpractice Quiz System</display-name>
+  
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- Session Configuration -->
+  <session-config>
+    <session-timeout>45</session-timeout>
+    <cookie-config>
+      <http-only>true</http-only>
+      <secure>false</secure> <!-- Set to true in production with HTTPS -->
+    </cookie-config>
+  </session-config>
+
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.LoginServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>QuizServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.QuizServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>ViolationServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.ViolationServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>AdminServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.AdminServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.LogoutServlet</servlet-class>
+  </servlet>
+
+  <!-- Servlet Mappings -->
+  <servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>QuizServlet</servlet-name>
+    <url-pattern>/quiz</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>ViolationServlet</servlet-name>
+    <url-pattern>/violation</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>AdminServlet</servlet-name>
+    <url-pattern>/admin</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
+
+  <!-- Error Pages -->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+  
+  <error-page>
+    <error-code>500</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+</web-app>
