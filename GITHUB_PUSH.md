@@ -178,12 +178,12 @@ git commit -m "Refactor: Improved DatabaseConnection error handling"
 ⚠️ **Before Pushing:**
 - ✅ Database credentials are in source code (DatabaseConnection.java)
 - ⚠️ Consider using environment variables for production
-- ⚠️ Default password in code: "Revanth2005" - change for production!
+-- ⚠️ Default password in code: "1234" - change for production!
 
 **Recommended:**
 ```java
 // Instead of hardcoded:
-String password = "Revanth2005";
+String password = "1234";
 
 // Use environment variable:
 String password = System.getenv("DB_PASSWORD");

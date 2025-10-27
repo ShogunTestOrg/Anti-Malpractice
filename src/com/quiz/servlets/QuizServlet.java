@@ -8,9 +8,25 @@ import java.util.*;
 import com.quiz.models.Question;
 import com.quiz.utils.SessionValidator;
 import com.quiz.utils.DatabaseConnection;
+import com.quiz.utils.Logger;
 
 public class QuizServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    
+    // Session attribute constants
+    private static final String ATTR_QUESTIONS = "questions";
+    private static final String ATTR_CURRENT_INDEX = "currentIndex";
+    private static final String ATTR_ANSWERS = "answers";
+    private static final String ATTR_VIOLATION_COUNT = "violationCount";
+    private static final String ATTR_START_TIME = "startTime";
+    private static final String ATTR_QUIZ_ID = "quizId";
+    private static final String ATTR_QUIZ_TEMPLATE_ID = "quizTemplateId";
+    private static final String ATTR_QUIZ_TITLE = "quizTitle";
+    private static final String ATTR_TIME_LIMIT = "timeLimit";
+    private static final String ATTR_ERROR = "error";
+    private static final String ATTR_SCORE = "score";
+    private static final String ATTR_TOTAL_QUESTIONS = "totalQuestions";
+    private static final String ATTR_AUTO_SUBMITTED = "autoSubmitted";
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,11 +51,11 @@ public class QuizServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        System.out.println("=== DOPOST CALLED ===");
+        Logger.logDebug("=== DOPOST CALLED ===");
         
         HttpSession session = request.getSession(false);
         if (!SessionValidator.isValidSession(session)) {
-            System.out.println("Invalid session, redirecting to login");
+            Logger.logDebug("Invalid session, redirecting to login");
             response.sendRedirect("index.jsp?error=session");
             return;
         }
@@ -47,28 +63,33 @@ public class QuizServlet extends HttpServlet {
         String action = request.getParameter("action");
         String navigation = request.getParameter("navigation");
         
-        System.out.println("Action parameter: " + action);
-        System.out.println("Navigation parameter: " + navigation);
+        Logger.logDebug("Action parameter: " + action);
+        Logger.logDebug("Navigation parameter: " + navigation);
         
         // Debug: print all parameters
-        System.out.println("All parameters:");
+        Logger.logDebug("All parameters:");
         java.util.Enumeration<String> paramNames = request.getParameterNames();
         while (paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
-            System.out.println("  " + paramName + " = " + request.getParameter(paramName));
+            Logger.logDebug("  " + paramName + " = " + request.getParameter(paramName));
         }
         
-        if ("answer".equals(action)) {
-            processAnswer(request, response, session);
+        try {
+            if ("answer".equals(action)) {
+                processAnswer(request, response, session);
+            }
+            
+            if (navigation != null) {
+                handleNavigation(request, response, session, navigation);
+            } else {
+                Logger.logDebug("WARNING: navigation parameter is NULL!");
+            }
+        } catch (Exception e) {
+            Logger.logError("Error processing quiz request", e);
+            response.sendRedirect("quiz.jsp?error=internal");
         }
         
-        if (navigation != null) {
-            handleNavigation(request, response, session, navigation);
-        } else {
-            System.out.println("WARNING: navigation parameter is NULL!");
-        }
-        
-        System.out.println("=== DOPOST COMPLETED ===");
+        Logger.logDebug("=== DOPOST COMPLETED ===");
     }
     
     private void startQuiz(HttpServletRequest request, HttpServletResponse response, HttpSession session)
@@ -76,23 +97,35 @@ public class QuizServlet extends HttpServlet {
         
         String username = (String) session.getAttribute("username");
         
-        System.out.println("=== QUIZ START REQUESTED ===");
-        System.out.println("Username: " + username);
+        Logger.logDebug("=== QUIZ START REQUESTED ===");
+        Logger.logDebug("Username: " + username);
         
-        // Generate quiz ID
+        // Determine if a quizId parameter (template) was provided
+        String quizIdParam = request.getParameter("quizId");
+        Integer quizTemplateId = null;
+        if (quizIdParam != null && !quizIdParam.trim().isEmpty()) {
+            try { 
+                quizTemplateId = Integer.parseInt(quizIdParam); 
+                session.setAttribute(ATTR_QUIZ_TEMPLATE_ID, quizTemplateId);
+            } catch (Exception e) { 
+                Logger.logError("Failed to parse quiz template ID", e);
+                quizTemplateId = null; 
+            }
+        }
+
         String quizId = "QUIZ-" + System.currentTimeMillis();
-        session.setAttribute("quizId", quizId);
-        System.out.println("Generated Quiz ID: " + quizId);
-        
-        // Insert quiz record into database
+        session.setAttribute(ATTR_QUIZ_ID, quizId);
+        Logger.logDebug("Generated Quiz ID: " + quizId);
+
+    // Insert quiz record into database (start a user quiz instance)
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
         try {
-            System.out.println("Getting database connection...");
+            Logger.logDebug("Getting database connection...");
             conn = DatabaseConnection.getConnection();
-            System.out.println("Connection obtained: " + (conn != null ? "SUCCESS" : "FAILED"));
+            Logger.logDebug("Connection obtained: " + (conn != null ? "SUCCESS" : "FAILED"));
             
             // First, get user_id from username
             String getUserIdSql = "SELECT id FROM users WHERE username = ?";
@@ -143,18 +176,77 @@ public class QuizServlet extends HttpServlet {
         
         System.out.println("=== QUIZ START COMPLETED ===");
         
-        // Generate questions (In production, fetch from database)
-        List<Question> questions = generateQuestions();
+    // Generate or load questions (In production, fetch from database)
+    List<Question> questions = new ArrayList<>();
+
+            if (quizTemplateId != null) {
+            // Load quiz title and questions from template
+            try (Connection qConn = DatabaseConnection.getConnection()) {
+                // First get quiz title and time limit
+                try (PreparedStatement titleStmt = qConn.prepareStatement("SELECT title, time_limit FROM quizzes_master WHERE id = ?")) {
+                    titleStmt.setInt(1, quizTemplateId);
+                    try (ResultSet titleRs = titleStmt.executeQuery()) {
+                        if (titleRs.next()) {
+                            session.setAttribute("quizTitle", titleRs.getString("title"));
+                            session.setAttribute("timeLimit", titleRs.getInt("time_limit"));
+                        }
+                    }
+                }
+
+                // Then load questions
+                try (PreparedStatement qPstmt = qConn.prepareStatement(
+                    "SELECT question_id, question_text, option_a, option_b, option_c, option_d, correct_option " +
+                    "FROM quiz_questions WHERE quiz_id = ? ORDER BY question_id ASC")) {
+                    qPstmt.setInt(1, quizTemplateId);
+                    try (ResultSet qRs = qPstmt.executeQuery()) {
+                        while (qRs.next()) {
+                            String text = qRs.getString("question_text");
+                            List<String> opts = new ArrayList<>();
+                            opts.add(qRs.getString("option_a").trim());
+                            opts.add(qRs.getString("option_b").trim());
+                            opts.add(qRs.getString("option_c").trim());
+                            opts.add(qRs.getString("option_d").trim());
+                            String correct = qRs.getString("correct_option").trim().toUpperCase();
+                            int correctIdx;
+                            switch (correct) {
+                                case "A": correctIdx = 0; break;
+                                case "B": correctIdx = 1; break;
+                                case "C": correctIdx = 2; break;
+                                case "D": correctIdx = 3; break;
+                                default: correctIdx = 0;
+                            }
+                            questions.add(new Question(qRs.getInt("question_id"), text, opts, correctIdx));
+                            Logger.logDebug("Added question: " + text);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                session.setAttribute("error", "Failed to load quiz: " + e.getMessage());
+                response.sendRedirect("available_quizzes.jsp");
+                return;
+            }
+            
+            if (questions.isEmpty()) {
+                session.setAttribute("error", "No questions found for this quiz.");
+                response.sendRedirect("available_quizzes.jsp");
+                return;
+            }
+        } else {
+            // fallback to generated pool
+            questions = generateQuestions();
+        }
         
         // Randomize questions
         Collections.shuffle(questions);
         
         System.out.println("=== RESETTING SESSION ATTRIBUTES ===");
-        session.setAttribute("questions", questions);
-        session.setAttribute("currentIndex", 0);
-        session.setAttribute("answers", new HashMap<Integer, Integer>());
-        session.setAttribute("violationCount", 0);
-        session.setAttribute("startTime", System.currentTimeMillis());
+        session.setAttribute(ATTR_QUESTIONS, questions);
+        session.setAttribute(ATTR_CURRENT_INDEX, 0);
+        session.setAttribute(ATTR_ANSWERS, new HashMap<Integer, Integer>());
+        session.setAttribute(ATTR_VIOLATION_COUNT, 0);
+        session.setAttribute(ATTR_START_TIME, System.currentTimeMillis());
+        Logger.logDebug("Session attributes initialized for quiz " + quizId);
         System.out.println("Violation count reset to: 0");
         System.out.println("=== SESSION ATTRIBUTES RESET COMPLETE ===");
         
@@ -164,29 +256,29 @@ public class QuizServlet extends HttpServlet {
     private void processAnswer(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws ServletException, IOException {
         
-        System.out.println("=== PROCESS ANSWER ===");
+        Logger.logDebug("=== PROCESS ANSWER ===");
         String answerStr = request.getParameter("answer");
-        Integer currentIndex = (Integer) session.getAttribute("currentIndex");
+        Integer currentIndex = (Integer) session.getAttribute(ATTR_CURRENT_INDEX);
         
-        System.out.println("Answer: " + answerStr);
-        System.out.println("Current Index: " + currentIndex);
+        Logger.logDebug("Answer: " + answerStr);
+        Logger.logDebug("Current Index: " + currentIndex);
         
         if (answerStr != null && currentIndex != null) {
             @SuppressWarnings("unchecked")
-            Map<Integer, Integer> answers = (Map<Integer, Integer>) session.getAttribute("answers");
+            Map<Integer, Integer> answers = (Map<Integer, Integer>) session.getAttribute(ATTR_ANSWERS);
             
             if (answers == null) {
                 answers = new HashMap<>();
-                session.setAttribute("answers", answers);
-                System.out.println("Created new answers map");
+                session.setAttribute(ATTR_ANSWERS, answers);
+                Logger.logDebug("Created new answers map");
             }
             
             answers.put(currentIndex, Integer.parseInt(answerStr));
-            System.out.println("Stored answer " + answerStr + " for question " + currentIndex);
+            Logger.logDebug("Stored answer " + answerStr + " for question " + currentIndex);
         } else {
-            System.out.println("No answer provided or currentIndex is null");
+            Logger.logDebug("No answer provided or currentIndex is null");
         }
-        System.out.println("=== PROCESS ANSWER COMPLETED ===");
+        Logger.logDebug("=== PROCESS ANSWER COMPLETED ===");
     }
     
     private void handleNavigation(HttpServletRequest request, HttpServletResponse response, 
@@ -294,7 +386,22 @@ public class QuizServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        
+        // Also insert a record into quiz_results table referencing the quiz template id (if present)
+        Object tmplObj = session.getAttribute("quizTemplateId");
+        if (tmplObj != null) {
+            try (Connection rConn = DatabaseConnection.getConnection()) {
+                String insertResultSql = "INSERT INTO quiz_results (quiz_id, username, score) VALUES (?, ?, ?)";
+                try (PreparedStatement rp = rConn.prepareStatement(insertResultSql)) {
+                    rp.setInt(1, (Integer) tmplObj);
+                    rp.setString(2, username);
+                    rp.setInt(3, score);
+                    rp.executeUpdate();
+                }
+            } catch (SQLException e) {
+                // Non-fatal: log and continue
+                e.printStackTrace();
+            }
+        }
         // Store results
         session.setAttribute("score", score);
         session.setAttribute("totalQuestions", questions != null ? questions.size() : 0);
@@ -383,5 +490,11 @@ public class QuizServlet extends HttpServlet {
         ));
         
         return questions;
+    }
+
+    // Provide default questions for reuse by other servlets
+    public static List<Question> getDefaultQuestions() {
+        QuizServlet tmp = new QuizServlet();
+        return tmp.generateQuestions();
     }
 }

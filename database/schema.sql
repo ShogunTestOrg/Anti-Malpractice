@@ -161,3 +161,31 @@ SELECT
 FROM violations v
 ORDER BY v.timestamp DESC
 LIMIT 100;
+
+-- Additional tables for admin-created quizzes (templates)
+CREATE TABLE IF NOT EXISTS quizzes_master (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    time_limit INT DEFAULT 30,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS quiz_questions (
+    question_id SERIAL PRIMARY KEY,
+    quiz_id INT NOT NULL REFERENCES quizzes_master(id) ON DELETE CASCADE,
+    question_text TEXT NOT NULL,
+    option_a TEXT,
+    option_b TEXT,
+    option_c TEXT,
+    option_d TEXT,
+    correct_option CHAR(1) DEFAULT 'A'
+);
+
+CREATE TABLE IF NOT EXISTS quiz_results (
+    result_id SERIAL PRIMARY KEY,
+    quiz_id INT REFERENCES quizzes_master(id),
+    username VARCHAR(100),
+    score INT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

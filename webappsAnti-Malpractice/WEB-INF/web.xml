@@ -46,11 +46,6 @@
     <servlet-class>com.quiz.servlets.LogoutServlet</servlet-class>
   </servlet>
 
-  <servlet>
-    <servlet-name>CreateQuizServlet</servlet-name>
-    <servlet-class>com.quiz.servlets.CreateQuizServlet</servlet-class>
-  </servlet>
-
   <!-- Servlet Mappings -->
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
@@ -75,21 +70,6 @@
   <servlet-mapping>
     <servlet-name>LogoutServlet</servlet-name>
     <url-pattern>/logout</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>CreateQuizServlet</servlet-name>
-    <url-pattern>/create-quiz</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>StartQuizServlet</servlet-name>
-    <servlet-class>com.quiz.servlets.StartQuizServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>StartQuizServlet</servlet-name>
-    <url-pattern>/start-quiz</url-pattern>
   </servlet-mapping>
 
   <!-- Error Pages -->

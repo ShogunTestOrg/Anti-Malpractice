@@ -70,3 +70,6 @@ erDiagram
     questions ||--o{ quiz_answers : "is_answered_in"
 
 ```
+javac -d "WebContent/WEB-INF/classes" \
+-cp ".;src;WebContent/WEB-INF/classes;C:\apache-tomcat-9.0.111\lib\servlet-api.jar;WebContent/WEB-INF/lib/*" \
+src/com/quiz/models/*.java src/com/quiz/utils/*.java src/com/quiz/servlets/*.java```

@@ -46,7 +46,8 @@ public class LoginServlet extends HttpServlet {
             if ("admin".equals(role)) {
                 response.sendRedirect("admin.jsp");
             } else {
-                response.sendRedirect("quiz?action=start");
+                // Redirect students to available quizzes list
+                response.sendRedirect("available_quizzes.jsp");
             }
         } else {
             response.sendRedirect("index.jsp?error=invalid");

@@ -245,7 +245,7 @@ Repository: D:/College/Semester 5/Lab/Web Programming/Project/Anti-Malpractice
 3. **Add .env template**:
    ```env
    DB_HOST=localhost
-   DB_PORT=5433
+   DB_PORT=5432
    DB_NAME=quiz_system
    DB_USER=postgres
    DB_PASSWORD=your_password_here

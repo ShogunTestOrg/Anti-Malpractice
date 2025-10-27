@@ -12,9 +12,9 @@ public class DatabaseConnection {
     
     // Database configuration
     private static final String DRIVER = "org.postgresql.Driver";
-    private static final String URL = "jdbc:postgresql://localhost:5433/quiz_system";
+    private static final String URL = "jdbc:postgresql://localhost:5432/quiz_system";
     private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "Revanth2005"; // Update with your PostgreSQL password
+    private static final String PASSWORD = "1234"; // Update with your PostgreSQL password
     
     // Connection pool settings (for production)
     private static final int MAX_POOL_SIZE = 10;

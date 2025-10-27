@@ -311,14 +311,11 @@
         <div class="quiz-header">
             <div class="quiz-info">
                 <div class="info-item">
-                        <span>👤 <%= username %></span>
+                    <span>👤 <%= username %></span>
                 </div>
                 <div class="info-item">
-                        <span>📝 Quiz ID: <%= quizId %></span>
+                    <span>📝 Quiz ID: <%= quizId %></span>
                 </div>
-                    <div class="info-item">
-                        <span>📘 <%= session.getAttribute("quizTitle") != null ? session.getAttribute("quizTitle") : "Custom Quiz" %></span>
-                    </div>
                 <div class="info-item violation-badge">
                     ⚠️ Violations: <span id="violationCount"><%= violationCount %></span>/5
                 </div>
@@ -331,7 +328,7 @@
         <div class="quiz-progress">
             <div>Question <%= currentIndex + 1 %> of <%= totalQuestions %></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: <%= Math.round(((currentIndex + 1) * 100.0 / totalQuestions)) %>%"></div>
+                <div class="progress-fill" style="width: <%= ((currentIndex + 1) * 100.0 / totalQuestions) %>%"></div>
             </div>
         </div>
         

@@ -190,10 +190,6 @@
     </div>
     
     <div class="container">
-        <div style="margin-bottom:16px;">
-            <a href="create_quiz.jsp" class="btn-refresh">＋ Create New Quiz</a>
-            <a href="available_quizzes.jsp" class="btn-refresh" style="margin-left:8px;">📚 View Quizzes</a>
-        </div>
         <!-- Statistics Cards -->
         <%
             // Calculate statistics from database

@@ -90,6 +90,11 @@ public class Logger {
         System.out.println("[INFO] " + timestamp + " - " + message);
     }
     
+    public static void logDebug(String message) {
+        String timestamp = LocalDateTime.now().format(formatter);
+        System.out.println("[DEBUG] " + timestamp + " - " + message);
+    }
+    
     public static void logError(String message, Exception e) {
         String timestamp = LocalDateTime.now().format(formatter);
         System.err.println("[ERROR] " + timestamp + " - " + message);

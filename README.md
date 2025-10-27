@@ -89,7 +89,7 @@ Anti-Malpractice/
 ### Prerequisites
 - JDK 17 or higher
 - Apache Tomcat 9.0
-- PostgreSQL 8.x or higher (running on port 5433)
+- PostgreSQL 8.x or higher (running on port 5432)
 - IDE (VS Code, Eclipse, or IntelliJ IDEA)
 
 ### Installation Steps
@@ -102,14 +102,14 @@ Anti-Malpractice/
 
 2. **Setup PostgreSQL Database**
    ```bash
-   psql -U postgres -p 5433 -f database/schema.sql
+   psql -U postgres -p 5432 -f database/schema.sql
    ```
-   - Default credentials: postgres/Revanth2005
+   - Default credentials: postgres/1234
    - Database name: quiz_system
 
 3. **Configure Database Connection**
    - Update `src/com/quiz/utils/DatabaseConnection.java` with your credentials
-   - Default: localhost:5433, database: quiz_system
+   - Default: localhost:5432, database: quiz_system
 
 4. **Compile Java Classes**
    ```powershell
@@ -144,10 +144,10 @@ Anti-Malpractice/
 
 ### Database Connection (DatabaseConnection.java)
 - **Host**: localhost
-- **Port**: 5433
+- **Port**: 5432
 - **Database**: quiz_system
 - **User**: postgres
-- **Password**: Revanth2005
+- **Password**: 1234
 
 ## Key Features Explained
 
@@ -230,10 +230,10 @@ Anti-Malpractice/
 ## Troubleshooting
 
 ### Database Connection Issues
-1. Verify PostgreSQL is running on port 5433
+1. Verify PostgreSQL is running on port 5432
 2. Check credentials in DatabaseConnection.java
 3. Ensure database `quiz_system` exists
-4. Test connection: `psql -U postgres -p 5433 -d quiz_system`
+4. Test connection: `psql -U postgres -p 5432 -d quiz_system`
 
 ### Compilation Errors
 1. Ensure servlet-api.jar is in Tomcat's lib directory
