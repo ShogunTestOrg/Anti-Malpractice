@@ -4,7 +4,10 @@ erDiagram
         int id PK
         varchar username
         varchar password
-        user_role role "ENUM('admin', 'student')"
+        varchar email
+        user_role role "ENUM('student', 'admin')"
+        timestamp created_at
+        timestamp last_login
         boolean is_active
     }
 
@@ -15,25 +18,55 @@ erDiagram
         varchar option_b
         varchar option_c
         varchar option_d
-        char correct_option
+        int correct_answer
+        difficulty_level difficulty "ENUM('easy', 'medium', 'hard')"
+        varchar category
+        int created_by FK
     }
 
-    quiz_results {
-        int result_id PK
+    quizzes {
+        int id PK
+        varchar quiz_id UK
         int user_id FK
+        timestamp start_time
+        timestamp end_time
         int score
-        int total_questions
-        timestamp submitted_at
+        quiz_status status "ENUM('in_progress', 'completed', 'auto_submitted')"
+        int violation_count
     }
 
-    violation_logs {
-        int log_id PK
-        int user_id FK
+    quiz_answers {
+        int id PK
+        varchar quiz_id FK
+        int question_id FK
+        int selected_answer
+        boolean is_correct
+    }
+
+    violations {
+        int id PK
+        varchar quiz_id FK
+        varchar username
         varchar violation_type
+        severity_level severity "ENUM('INFO', 'WARNING', 'CRITICAL')"
         timestamp timestamp
-        severity_level severity "ENUM('Low', 'Medium', 'High')"
     }
 
-    users ||--o{ quiz_results : "takes"
-    users ||--o{ violation_logs : "triggers"
+    session_logs {
+        int id PK
+        int user_id FK
+        varchar quiz_id
+        varchar action
+        timestamp timestamp
+    }
+
+    users ||--o{ quizzes : "takes"
+    users ||--o{ questions : "creates"
+    users ||--o{ session_logs : "generates"
+    
+    quizzes ||--o{ quiz_answers : "contains"
+    quizzes ||--o{ violations : "has"
+    
+    questions ||--o{ quiz_answers : "is_answered_in"
+
 ```
