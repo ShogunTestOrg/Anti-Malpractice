@@ -87,9 +87,39 @@
     <servlet-class>com.quiz.servlets.StartQuizServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>TestServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.TestServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>DebugLoginServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.DebugLoginServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>DeleteQuizServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.DeleteQuizServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>StartQuizServlet</servlet-name>
     <url-pattern>/start-quiz</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>TestServlet</servlet-name>
+    <url-pattern>/test</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>DebugLoginServlet</servlet-name>
+    <url-pattern>/debug-login</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>DeleteQuizServlet</servlet-name>
+    <url-pattern>/delete-quiz</url-pattern>
   </servlet-mapping>
 
   <!-- Error Pages -->

@@ -217,7 +217,7 @@
         </p>
         
         <div class="actions">
-            <a href="quiz?action=start" class="btn btn-primary">Take Another Quiz</a>
+            <a href="student_quizzes.jsp" class="btn btn-primary">Take Another Quiz</a>
             <a href="logout" class="btn btn-secondary">Logout</a>
         </div>
     </div>

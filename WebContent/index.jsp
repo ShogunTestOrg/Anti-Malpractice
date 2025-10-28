@@ -110,7 +110,17 @@
             if (error != null) { 
         %>
             <div class="error-message">
-                <%= error.equals("invalid") ? "Invalid username or password!" : "Session expired. Please login again." %>
+                <%
+                    if ("invalid".equals(error)) {
+                        out.println("Invalid username or password!");
+                    } else if ("unauthorized".equals(error)) {
+                        out.println("Access denied. Please login with appropriate credentials.");
+                    } else if ("session".equals(error)) {
+                        out.println("Session expired. Please login again.");
+                    } else {
+                        out.println("Please login to continue.");
+                    }
+                %>
             </div>
         <% } %>
         

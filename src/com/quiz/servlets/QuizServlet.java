@@ -390,12 +390,30 @@ public class QuizServlet extends HttpServlet {
         Object tmplObj = session.getAttribute("quizTemplateId");
         if (tmplObj != null) {
             try (Connection rConn = DatabaseConnection.getConnection()) {
+                // Insert into quiz_results
                 String insertResultSql = "INSERT INTO quiz_results (quiz_id, username, score) VALUES (?, ?, ?)";
                 try (PreparedStatement rp = rConn.prepareStatement(insertResultSql)) {
                     rp.setInt(1, (Integer) tmplObj);
                     rp.setString(2, username);
                     rp.setInt(3, score);
                     rp.executeUpdate();
+                }
+                
+                // Insert into quiz_attempts for better tracking
+                String insertAttemptSql = "INSERT INTO quiz_attempts (student_id, quiz_id, score, percentage, end_time, status) " +
+                                        "SELECT u.id, ?, ?, ?, CURRENT_TIMESTAMP, ? " +
+                                        "FROM users u WHERE u.username = ?";
+                try (PreparedStatement ap = rConn.prepareStatement(insertAttemptSql)) {
+                    double percentage = questions != null && questions.size() > 0 ? 
+                                      (double) score / questions.size() * 100 : 0.0;
+                    String status = "true".equals(autoSubmit) ? "auto_submitted" : "completed";
+                    
+                    ap.setInt(1, (Integer) tmplObj);
+                    ap.setInt(2, score);
+                    ap.setDouble(3, percentage);
+                    ap.setString(4, status);
+                    ap.setString(5, username);
+                    ap.executeUpdate();
                 }
             } catch (SQLException e) {
                 // Non-fatal: log and continue

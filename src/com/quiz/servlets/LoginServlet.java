@@ -22,16 +22,41 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         
-        // Simple authentication (In production, use database with hashed passwords)
+        // Database authentication
         boolean isValid = false;
         String role = null;
         
-        if ("student".equals(username) && "1234".equals(password)) {
-            isValid = true;
-            role = "student";
-        } else if ("admin".equals(username) && "admin123".equals(password)) {
-            isValid = true;
-            role = "admin";
+        try {
+            // Use database authentication
+            java.sql.Connection conn = com.quiz.utils.DatabaseConnection.getConnection();
+            
+            String sql = "SELECT password, role FROM users WHERE username = ? AND is_active = true";
+            java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, username);
+            java.sql.ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                String dbPassword = rs.getString("password");
+                if (password.equals(dbPassword)) {
+                    isValid = true;
+                    role = rs.getString("role");
+                }
+            }
+            
+            rs.close();
+            pstmt.close();
+            conn.close();
+            
+        } catch (Exception e) {
+            // Fallback to hardcoded authentication if database fails
+            System.err.println("Database authentication failed, using fallback: " + e.getMessage());
+            if ("student".equals(username) && "1234".equals(password)) {
+                isValid = true;
+                role = "student";
+            } else if ("admin".equals(username) && "admin123".equals(password)) {
+                isValid = true;
+                role = "admin";
+            }
         }
         
         if (isValid) {
@@ -47,7 +72,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("admin.jsp");
             } else {
                 // Redirect students to available quizzes list
-                response.sendRedirect("available_quizzes.jsp");
+                response.sendRedirect("student_quizzes.jsp");
             }
         } else {
             response.sendRedirect("index.jsp?error=invalid");
