@@ -102,6 +102,11 @@
     <servlet-class>com.quiz.servlets.DeleteQuizServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>AddQuestionServlet</servlet-name>
+    <servlet-class>com.quiz.servlets.AddQuestionServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>StartQuizServlet</servlet-name>
     <url-pattern>/start-quiz</url-pattern>
@@ -120,6 +125,11 @@
   <servlet-mapping>
     <servlet-name>DeleteQuizServlet</servlet-name>
     <url-pattern>/delete-quiz</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>AddQuestionServlet</servlet-name>
+    <url-pattern>/add-question</url-pattern>
   </servlet-mapping>
 
   <!-- Error Pages -->
