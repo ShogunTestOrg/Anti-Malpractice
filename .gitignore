@@ -77,6 +77,11 @@ database.properties
 setenv.bat
 setenv.sh
 
+# Test and example files
+TestConnection.java
+PostgresqlExample.java
+Test*.class
+
 # Backup files
 *.bak
 *.swp
