@@ -81,6 +81,32 @@ setenv.sh
 TestConnection.java
 PostgresqlExample.java
 Test*.class
+TestNumericalQuestions.java
+
+# SQL test/check files (keep schema files, exclude testing scripts)
+check_*.sql
+test_*.sql
+verify_*.sql
+list_*.sql
+insert_numerical.sql
+update_quiz_simple.sql
+fix_q*.sql
+fix_question*.sql
+fix_quiz*.sql
+convert_to_mixed_quiz.sql
+
+# Deployment and utility scripts
+deploy.ps1.backup
+deploy_new.ps1
+deploy.ps1
+migrate_db.ps1
+run_sql.ps1
+update_jsp_dark_theme.ps1
+apply_schema.bat
+fix_table.bat
+
+# Tomcat webapp deployment directory
+webappsAnti-Malpractice/
 
 # Backup files
 *.bak

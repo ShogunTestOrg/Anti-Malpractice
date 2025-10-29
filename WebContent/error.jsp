@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -16,12 +16,13 @@
             margin: 0;
         }
         .error-container {
-            background: white;
+            background: #1a1a1a;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
             max-width: 500px;
+            border: 2px solid #e74c3c;
         }
         .error-icon {
             font-size: 72px;
@@ -32,13 +33,13 @@
             margin-bottom: 15px;
         }
         p {
-            color: #666;
+            color: #e0e0e0;
             margin-bottom: 25px;
             line-height: 1.6;
         }
         .btn-home {
-            background: #667eea;
-            color: white;
+            background: #ffffff;
+            color: #000;
             padding: 12px 30px;
             border: none;
             border-radius: 5px;
@@ -49,7 +50,7 @@
             transition: background 0.3s;
         }
         .btn-home:hover {
-            background: #5568d3;
+            background: #e0e0e0;
         }
     </style>
 </head>

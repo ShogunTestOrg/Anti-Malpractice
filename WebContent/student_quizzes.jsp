@@ -24,27 +24,34 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f6fa;
+            background: #000000;
+            color: #e0e0e0;
         }
         .header {
-            background: #2c3e50;
+            background: #1a1a1a;
             color: white;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #333333;
         }
         .header h1 {
             font-size: 24px;
         }
         .logout-btn {
-            background: #e74c3c;
+            background: #f44336;
             color: white;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #f44336;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #e53935;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
         }
         .container {
             max-width: 1200px;
@@ -52,32 +59,36 @@
             padding: 0 20px;
         }
         .welcome-section {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
         .welcome-section h2 {
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 10px;
         }
         .welcome-section p {
-            color: #7f8c8d;
+            color: #b0b0b0;
         }
         .search-section {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
         .search-box {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #444444;
             border-radius: 5px;
             font-size: 14px;
+            background: #0a0a0a;
+            color: #e0e0e0;
         }
         .quiz-grid {
             display: grid;
@@ -85,25 +96,26 @@
             gap: 20px;
         }
         .quiz-card {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
         }
         .quiz-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(255,255,255,0.1);
         }
         .quiz-title {
             font-size: 20px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 10px;
         }
         .quiz-description {
-            color: #7f8c8d;
+            color: #b0b0b0;
             margin-bottom: 15px;
             font-size: 14px;
             line-height: 1.4;
@@ -113,13 +125,14 @@
             justify-content: space-between;
             margin-bottom: 20px;
             font-size: 13px;
-            color: #7f8c8d;
+            color: #b0b0b0;
         }
         .quiz-stats {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
             font-size: 13px;
+            color: #b0b0b0;
         }
         .stat-item {
             display: flex;
@@ -127,10 +140,10 @@
             gap: 5px;
         }
         .btn-start {
-            background: #27ae60;
+            background: #4caf50;
             color: white;
             padding: 12px 24px;
-            border: none;
+            border: 2px solid #4caf50;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
@@ -139,21 +152,24 @@
             display: inline-block;
             text-align: center;
             width: 100%;
-            transition: background 0.2s;
+            transition: all 0.3s;
         }
         .btn-start:hover {
-            background: #229954;
+            background: #66bb6a;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
         .btn-start:disabled {
-            background: #bdc3c7;
+            background: #333333;
+            border-color: #333333;
+            color: #666666;
             cursor: not-allowed;
         }
         .attempted-badge {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: #3498db;
-            color: white;
+            background: #ffffff;
+            color: #000000;
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 11px;
@@ -162,14 +178,15 @@
         .no-quizzes {
             text-align: center;
             padding: 60px 20px;
-            color: #7f8c8d;
-            background: white;
+            color: #b0b0b0;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
         .no-quizzes h3 {
             margin-bottom: 10px;
-            color: #2c3e50;
+            color: #ffffff;
         }
         .difficulty-badge {
             display: inline-block;
@@ -180,16 +197,16 @@
             margin-left: 10px;
         }
         .difficulty-easy {
-            background: #d5f4e6;
-            color: #27ae60;
+            background: #2e7d32;
+            color: #a5d6a7;
         }
         .difficulty-medium {
-            background: #fff3cd;
-            color: #f39c12;
+            background: #ef6c00;
+            color: #ffcc80;
         }
         .difficulty-hard {
-            background: #f8d7da;
-            color: #e74c3c;
+            background: #c62828;
+            color: #ef9a9a;
         }
     </style>
 </head>

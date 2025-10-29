@@ -32,47 +32,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Results</title>
+    <link rel="stylesheet" href="css/dark-theme-overrides.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #e0e0e0;
         }
         .result-container {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 15px;
             padding: 40px;
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
             text-align: center;
         }
         .result-header {
             margin-bottom: 30px;
         }
         .result-header h1 {
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 10px;
         }
         .result-header p {
-            color: #7f8c8d;
+            color: #b0b0b0;
             font-size: 16px;
         }
         .score-circle {
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #d0d0d0 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 30px auto;
-            color: white;
+            color: #000000;
         }
         .score-circle .percentage {
             font-size: 48px;
@@ -83,40 +86,41 @@
             margin-top: 10px;
         }
         .result-details {
-            background: #f8f9fa;
+            background: #2a2a2a;
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
+            border: 1px solid #444;
         }
         .detail-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #444;
         }
         .detail-row:last-child {
             border-bottom: none;
         }
         .detail-label {
-            color: #7f8c8d;
+            color: #b0b0b0;
             font-weight: 500;
         }
         .detail-value {
-            color: #2c3e50;
+            color: #ffffff;
             font-weight: 600;
         }
         .violation-warning {
-            background: #fff3cd;
+            background: #3a3000;
             border: 1px solid #ffc107;
             border-radius: 8px;
             padding: 15px;
             margin: 20px 0;
-            color: #856404;
+            color: #ffd700;
         }
         .violation-warning.critical {
-            background: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+            background: #3a0000;
+            border-color: #dc3545;
+            color: #ff6b6b;
         }
         .actions {
             display: flex;
@@ -134,31 +138,34 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s;
+            color: #000000 !important;
         }
         .btn-primary {
-            background: #667eea;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
         }
         .btn-primary:hover {
-            background: #5568d3;
+            background: #e0e0e0;
+            color: #000000 !important;
         }
         .btn-secondary {
-            background: #6c757d;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
         }
         .btn-secondary:hover {
-            background: #5a6268;
+            background: #e0e0e0;
+            color: #000000 !important;
         }
         .message {
             margin-top: 20px;
             font-size: 18px;
-            color: #2c3e50;
+            color: #e0e0e0;
         }
         .message.pass {
-            color: #28a745;
+            color: #4CAF50;
         }
         .message.fail {
-            color: #dc3545;
+            color: #ff6b6b;
         }
     </style>
 </head>
@@ -189,7 +196,7 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">Violations:</span>
-                <span class="detail-value" style="color: <%= violationCount > 0 ? "#dc3545" : "#28a745" %>;">
+                <span class="detail-value" style="color: <%= violationCount > 0 ? "#ff6b6b" : "#4CAF50" %>;">
                     <%= violationCount %>
                 </span>
             </div>

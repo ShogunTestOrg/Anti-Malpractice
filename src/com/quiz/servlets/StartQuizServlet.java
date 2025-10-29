@@ -83,24 +83,40 @@ public class StartQuizServlet extends HttpServlet {
                 } catch (Exception e) {
                     // ignore title fetch errors
                 }
-                String qSql = "SELECT question_text, option_a, option_b, option_c, option_d, correct_option FROM quiz_questions WHERE quiz_id = ? ORDER BY question_id ASC";
+                String qSql = "SELECT question_text, option_a, option_b, option_c, option_d, correct_option, question_type, numerical_answer, answer_tolerance FROM quiz_questions WHERE quiz_id = ? ORDER BY question_id ASC";
                 pstmt = conn.prepareStatement(qSql);
                 pstmt.setInt(1, quizTemplateId);
                 rs = pstmt.executeQuery();
                 int idx = 0;
                 while (rs.next()) {
                     String text = rs.getString("question_text");
-                    List<String> opts = new ArrayList<>();
-                    opts.add(rs.getString("option_a"));
-                    opts.add(rs.getString("option_b"));
-                    opts.add(rs.getString("option_c"));
-                    opts.add(rs.getString("option_d"));
-                    String correct = rs.getString("correct_option");
-                    int correctIdx = 0;
-                    if ("B".equalsIgnoreCase(correct)) correctIdx = 1;
-                    else if ("C".equalsIgnoreCase(correct)) correctIdx = 2;
-                    else if ("D".equalsIgnoreCase(correct)) correctIdx = 3;
-                    questions.add(new Question(idx + 1, text, opts, correctIdx));
+                    String questionType = rs.getString("question_type");
+                    
+                    if ("numerical".equalsIgnoreCase(questionType)) {
+                        // Create numerical question
+                        double numericalAnswer = rs.getDouble("numerical_answer");
+                        double tolerance = rs.getDouble("answer_tolerance");
+                        Question q = new Question(idx + 1, text, new ArrayList<>(), 0);
+                        q.setQuestionType("numerical");
+                        q.setNumericalAnswer(numericalAnswer);
+                        q.setAnswerTolerance(tolerance);
+                        questions.add(q);
+                    } else {
+                        // Create multiple choice question
+                        List<String> opts = new ArrayList<>();
+                        opts.add(rs.getString("option_a"));
+                        opts.add(rs.getString("option_b"));
+                        opts.add(rs.getString("option_c"));
+                        opts.add(rs.getString("option_d"));
+                        String correct = rs.getString("correct_option");
+                        int correctIdx = 0;
+                        if ("B".equalsIgnoreCase(correct)) correctIdx = 1;
+                        else if ("C".equalsIgnoreCase(correct)) correctIdx = 2;
+                        else if ("D".equalsIgnoreCase(correct)) correctIdx = 3;
+                        Question q = new Question(idx + 1, text, opts, correctIdx);
+                        q.setQuestionType("multiple_choice");
+                        questions.add(q);
+                    }
                     idx++;
                 }
                 rs.close(); pstmt.close();
@@ -118,6 +134,7 @@ public class StartQuizServlet extends HttpServlet {
 
             session.setAttribute("currentIndex", 0);
             session.setAttribute("answers", new HashMap<Integer, Integer>());
+            session.setAttribute("numericalAnswers", new HashMap<Integer, Double>());
             session.setAttribute("violationCount", 0);
             session.setAttribute("startTime", System.currentTimeMillis());
 

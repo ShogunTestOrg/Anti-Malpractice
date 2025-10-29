@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Online Quiz System</title>
-    <link rel="stylesheet" href="css/style.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -17,15 +16,16 @@
             margin: 0;
         }
         .login-container {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(255,255,255,0.1);
             width: 400px;
         }
         h2 {
             text-align: center;
-            color: #333;
+            color: #ffffff;
             margin-bottom: 30px;
         }
         .form-group {
@@ -34,59 +34,82 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #555;
+            color: #e0e0e0;
             font-weight: 500;
         }
         input[type="text"],
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #444444;
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
+            background: #0a0a0a;
+            color: #e0e0e0;
         }
         input[type="text"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
         }
         .btn-login {
             width: 100%;
             padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         .btn-login:hover {
-            background: #5568d3;
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .error-message {
-            color: #e74c3c;
+            color: #ff6b6b;
             text-align: center;
             margin-top: 15px;
             font-size: 14px;
+            background: #330000;
+            padding: 10px;
+            border-radius: 5px;
         }
         .info-box {
-            background: #f0f8ff;
+            background: #0d47a1;
             padding: 15px;
             border-radius: 5px;
             margin-top: 20px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1976d2;
         }
         .info-box h4 {
             margin: 0 0 10px 0;
-            color: #667eea;
+            color: #64b5f6;
         }
         .info-box p {
             margin: 5px 0;
             font-size: 12px;
-            color: #666;
+            color: #bbdefb;
+        }
+        .demo-box {
+            background: #e65100;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 4px solid #ff9800;
+        }
+        .demo-box h4 {
+            margin: 0 0 10px 0;
+            color: #ffcc80;
+        }
+        .demo-box p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #ffe0b2;
         }
     </style>
 </head>
@@ -132,7 +155,7 @@
             <p>• Violations will be logged and reported</p>
         </div>
         
-        <div class="info-box" style="margin-top: 10px; background: #fff3cd; border-left-color: #ffc107;">
+        <div class="demo-box">
             <h4>Demo Credentials</h4>
             <p><strong>Student:</strong> student / 1234</p>
             <p><strong>Admin:</strong> admin / admin123</p>

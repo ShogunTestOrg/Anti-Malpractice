@@ -24,37 +24,49 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f6fa;
+            background: #000000;
+            color: #e0e0e0;
         }
         .header {
-            background: #2c3e50;
+            background: #1a1a1a;
             color: white;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #333333;
         }
         .header h1 {
             font-size: 24px;
         }
         .back-btn {
-            background: #3498db;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
             margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .logout-btn {
-            background: #e74c3c;
+            background: #f44336;
             color: white;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #f44336;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #e53935;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
         }
         .container {
             max-width: 1400px;
@@ -66,29 +78,34 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background: white;
+            background: #1a1a1a;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #333333;
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
         .btn-create {
-            background: #27ae60;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
             padding: 12px 24px;
-            border: none;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
             font-size: 14px;
+            transition: all 0.3s;
         }
         .btn-create:hover {
-            background: #229954;
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .search-box {
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #444444;
             border-radius: 5px;
             width: 300px;
+            background: #0a0a0a;
+            color: #e0e0e0;
         }
         .quiz-grid {
             display: grid;
@@ -96,23 +113,25 @@
             gap: 20px;
         }
         .quiz-card {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
             transition: transform 0.2s;
         }
         .quiz-card:hover {
             transform: translateY(-2px);
+            border-color: #4CAF50;
         }
         .quiz-title {
             font-size: 18px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 10px;
         }
         .quiz-description {
-            color: #7f8c8d;
+            color: #b0b0b0;
             margin-bottom: 15px;
             font-size: 14px;
         }
@@ -121,7 +140,7 @@
             justify-content: space-between;
             margin-bottom: 15px;
             font-size: 12px;
-            color: #7f8c8d;
+            color: #b0b0b0;
         }
         .quiz-actions {
             display: flex;
@@ -129,39 +148,46 @@
         }
         .btn-action {
             padding: 8px 16px;
-            border: none;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
             font-size: 12px;
             text-align: center;
+            transition: all 0.3s;
         }
         .btn-edit {
-            background: #3498db;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
         }
         .btn-edit:hover {
-            background: #2980b9;
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .btn-delete {
-            background: #e74c3c;
-            color: white;
+            background: #f44336;
+            color: white !important;
+            border-color: #f44336;
         }
         .btn-delete:hover {
-            background: #c0392b;
+            background: #e53935;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
         }
         .btn-view {
-            background: #f39c12;
-            color: white;
+            background: #4CAF50;
+            color: white !important;
+            border-color: #4CAF50;
         }
         .btn-view:hover {
-            background: #e67e22;
+            background: #45a049;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
         .quiz-stats {
             display: flex;
             gap: 15px;
             margin-top: 10px;
             font-size: 12px;
+            color: #b0b0b0;
         }
         .stat-item {
             display: flex;
@@ -171,10 +197,11 @@
         .no-quizzes {
             text-align: center;
             padding: 40px;
-            color: #7f8c8d;
-            background: white;
+            color: #b0b0b0;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
         .modal {
             display: none;
@@ -187,12 +214,14 @@
             background-color: rgba(0,0,0,0.5);
         }
         .modal-content {
-            background-color: white;
+            background-color: #1a1a1a;
+            border: 1px solid #333333;
             margin: 15% auto;
             padding: 20px;
             border-radius: 10px;
             width: 80%;
             max-width: 500px;
+            color: #e0e0e0;
         }
         .modal-header {
             display: flex;
@@ -200,14 +229,17 @@
             align-items: center;
             margin-bottom: 20px;
         }
+        .modal-header h3 {
+            color: #ffffff;
+        }
         .close {
-            color: #aaa;
+            color: #b0b0b0;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
         }
         .close:hover {
-            color: #000;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -230,7 +262,7 @@
             String error = request.getParameter("error");
             if (success != null) {
         %>
-        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+        <div style="background: #1a3d1a; color: #4CAF50; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #4CAF50;">
             <%
                 if ("quiz_deleted".equals(success)) {
                     out.println("✅ Quiz deleted successfully!");
@@ -241,7 +273,7 @@
             }
             if (error != null) {
         %>
-        <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+        <div style="background: #3d1a1a; color: #ff6b6b; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f44336;">
             <%
                 if ("invalid_quiz_id".equals(error)) {
                     out.println("❌ Invalid quiz ID provided.");
@@ -364,10 +396,10 @@
                 <span class="close" onclick="closeModal()">×</span>
             </div>
             <p>Are you sure you want to delete the quiz "<span id="quizTitle"></span>"?</p>
-            <p style="color: #e74c3c; font-size: 12px; margin-top: 10px;">This action cannot be undone.</p>
+            <p style="color: #ff6b6b; font-size: 12px; margin-top: 10px;">This action cannot be undone.</p>
             <div style="margin-top: 20px; text-align: right;">
-                <button onclick="closeModal()" style="margin-right: 10px; padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">Cancel</button>
-                <button onclick="deleteQuiz()" style="padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Delete</button>
+                <button onclick="closeModal()" style="margin-right: 10px; padding: 8px 16px; border: 2px solid #ffffff; background: #ffffff; color: #000000; border-radius: 5px; cursor: pointer;">Cancel</button>
+                <button onclick="deleteQuiz()" style="padding: 8px 16px; background: #f44336; color: white; border: 2px solid #f44336; border-radius: 5px; cursor: pointer;">Delete</button>
             </div>
         </div>
     </div>

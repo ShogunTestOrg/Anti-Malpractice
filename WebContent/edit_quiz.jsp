@@ -38,37 +38,49 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f6fa;
+            background: #000000;
+            color: #e0e0e0;
         }
         .header {
-            background: #2c3e50;
+            background: #1a1a1a;
             color: white;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #333333;
         }
         .header h1 {
             font-size: 24px;
         }
         .back-btn {
-            background: #3498db;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
             margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .logout-btn {
-            background: #e74c3c;
+            background: #f44336;
             color: white;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #f44336;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #e53935;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
         }
         .container {
             max-width: 1000px;
@@ -76,10 +88,15 @@
             padding: 0 20px;
         }
         .form-container {
-            background: white;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(255,255,255,0.05);
+        }
+        .form-container h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -88,16 +105,18 @@
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #ffffff;
         }
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #444444;
             border-radius: 5px;
             font-size: 14px;
+            background: #0a0a0a;
+            color: #e0e0e0;
         }
         .form-group textarea {
             height: 80px;
@@ -109,38 +128,43 @@
             gap: 20px;
         }
         .btn-submit {
-            background: #27ae60;
-            color: white;
+            background: #ffffff;
+            color: #000000 !important;
             padding: 15px 30px;
-            border: none;
+            border: 2px solid #ffffff;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
+            transition: all 0.3s;
         }
         .btn-submit:hover {
-            background: #229954;
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         .error-message {
-            background: #ffebee;
-            color: #c62828;
+            background: #3d1a1a;
+            color: #ff6b6b;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 20px;
+            border: 1px solid #f44336;
         }
         .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #1a3d1a;
+            color: #4CAF50;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 20px;
+            border: 1px solid #4CAF50;
         }
         .info-message {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: #0d2847;
+            color: #64b5f6;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
+            border: 1px solid #1976d2;
         }
     </style>
 </head>

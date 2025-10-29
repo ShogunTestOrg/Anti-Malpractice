@@ -1,4 +1,4 @@
-/* General Styles */
+/* General Styles - Dark Theme */
 * {
     margin: 0;
     padding: 0;
@@ -8,7 +8,8 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #e0e0e0;
+    background-color: #000000;
 }
 
 /* Animations */
@@ -81,11 +82,11 @@ body {
 .p-2 { padding: 20px; }
 .p-3 { padding: 30px; }
 
-/* Buttons */
+/* Buttons - Dark Theme */
 .btn {
     display: inline-block;
     padding: 12px 24px;
-    border: none;
+    border: 2px solid #ffffff;
     border-radius: 5px;
     font-size: 14px;
     font-weight: 600;
@@ -93,14 +94,17 @@ body {
     transition: all 0.3s ease;
     text-decoration: none;
     text-align: center;
+    background: #ffffff;
+    color: #000000;
 }
 
 /* small utility button used in admin UI for quick actions */
 .btn-refresh {
     display: inline-block;
     padding: 10px 16px;
-    background: #3498db;
-    color: white;
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
@@ -108,7 +112,8 @@ body {
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    background: #f0f0f0;
 }
 
 .btn:active {
@@ -116,36 +121,42 @@ body {
 }
 
 .btn-primary {
-    background: #667eea;
-    color: white;
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
 }
 
 .btn-secondary {
-    background: #6c757d;
-    color: white;
+    background: #d0d0d0;
+    color: #000000;
+    border: 2px solid #d0d0d0;
 }
 
 .btn-success {
-    background: #28a745;
-    color: white;
+    background: #4caf50;
+    color: #ffffff;
+    border: 2px solid #4caf50;
 }
 
 .btn-danger {
-    background: #dc3545;
-    color: white;
+    background: #f44336;
+    color: #ffffff;
+    border: 2px solid #f44336;
 }
 
 .btn-warning {
-    background: #ffc107;
-    color: #212529;
+    background: #ff9800;
+    color: #000000;
+    border: 2px solid #ff9800;
 }
 
-/* Cards */
+/* Cards - Dark Theme */
 .card {
-    background: white;
+    background: #1a1a1a;
+    border: 1px solid #333333;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
     margin-bottom: 20px;
 }
 
@@ -154,10 +165,11 @@ body {
     font-weight: 600;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #333333;
+    color: #ffffff;
 }
 
-/* Forms */
+/* Forms - Dark Theme */
 .form-group {
     margin-bottom: 20px;
 }
@@ -166,25 +178,27 @@ body {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #555;
+    color: #e0e0e0;
 }
 
 .form-control {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #444444;
     border-radius: 5px;
     font-size: 14px;
     transition: border-color 0.3s;
+    background: #1a1a1a;
+    color: #e0e0e0;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-/* Alerts */
+/* Alerts - Dark Theme */
 .alert {
     padding: 15px;
     border-radius: 5px;
@@ -192,30 +206,30 @@ body {
 }
 
 .alert-success {
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
+    background: #1b5e20;
+    border: 1px solid #2e7d32;
+    color: #a5d6a7;
 }
 
 .alert-danger {
-    background: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
+    background: #b71c1c;
+    border: 1px solid #c62828;
+    color: #ef9a9a;
 }
 
 .alert-warning {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    color: #856404;
+    background: #e65100;
+    border: 1px solid #ef6c00;
+    color: #ffcc80;
 }
 
 .alert-info {
-    background: #d1ecf1;
-    border: 1px solid #bee5eb;
-    color: #0c5460;
+    background: #01579b;
+    border: 1px solid #0277bd;
+    color: #81d4fa;
 }
 
-/* Tables */
+/* Tables - Dark Theme */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -226,20 +240,21 @@ body {
 .table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #333333;
+    color: #e0e0e0;
 }
 
 .table th {
-    background: #f8f9fa;
+    background: #1a1a1a;
     font-weight: 600;
-    color: #495057;
+    color: #ffffff;
 }
 
 .table tbody tr:hover {
-    background: #f8f9fa;
+    background: #2a2a2a;
 }
 
-/* Badges */
+/* Badges - Dark Theme */
 .badge {
     display: inline-block;
     padding: 5px 10px;
@@ -249,23 +264,23 @@ body {
 }
 
 .badge-primary {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: #1565c0;
+    color: #e3f2fd;
 }
 
 .badge-success {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: #2e7d32;
+    color: #e8f5e9;
 }
 
 .badge-danger {
-    background: #ffebee;
-    color: #c62828;
+    background: #c62828;
+    color: #ffebee;
 }
 
 .badge-warning {
-    background: #fff3e0;
-    color: #ef6c00;
+    background: #ef6c00;
+    color: #fff3e0;
 }
 
 /* Responsive */
@@ -289,10 +304,10 @@ body {
     }
 }
 
-/* Loading Spinner */
+/* Loading Spinner - Dark Theme */
 .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
+    border: 4px solid #333333;
+    border-top: 4px solid #ffffff;
     border-radius: 50%;
     width: 40px;
     height: 40px;

@@ -38,6 +38,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz - Question <%= currentIndex + 1 %></title>
+    <link rel="stylesheet" href="css/dark-theme-overrides.css">
     <style>
         * {
             margin: 0;
@@ -46,26 +47,29 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #e0e0e0;
         }
         .quiz-container {
             max-width: 900px;
             margin: 0 auto;
-            background: white;
+            background: #1a1a1a;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             overflow: hidden;
+            border: 1px solid #333;
         }
         .quiz-header {
-            background: #667eea;
+            background: #2a2a2a;
             color: white;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            border-bottom: 2px solid #444;
         }
         .quiz-info {
             display: flex;
@@ -81,8 +85,9 @@
             font-size: 24px;
             font-weight: bold;
             padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
+            background: #444;
             border-radius: 5px;
+            color: #ffffff;
         }
         .violation-badge {
             background: #e74c3c;
@@ -91,33 +96,34 @@
             font-weight: bold;
         }
         .quiz-progress {
-            background: #f8f9fa;
+            background: #2a2a2a;
             padding: 15px 20px;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #444;
         }
         .progress-bar {
             height: 10px;
-            background: #e9ecef;
+            background: #333;
             border-radius: 5px;
             overflow: hidden;
             margin-top: 10px;
         }
         .progress-fill {
             height: 100%;
-            background: #667eea;
+            background: #4CAF50;
             transition: width 0.3s;
         }
         .question-container {
             padding: 40px;
+            background: #1a1a1a;
         }
         .question-number {
-            color: #667eea;
+            color: #4CAF50;
             font-weight: bold;
             margin-bottom: 15px;
         }
         .question-text {
             font-size: 20px;
-            color: #333;
+            color: #e0e0e0;
             margin-bottom: 30px;
             line-height: 1.6;
         }
@@ -131,14 +137,16 @@
             display: flex;
             align-items: center;
             padding: 15px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #444;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            background: #2a2a2a;
+            color: #e0e0e0;
         }
         .option-label:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
+            border-color: #4CAF50;
+            background: #333;
         }
         .option-label input[type="radio"] {
             margin-right: 15px;
@@ -161,25 +169,25 @@
             transition: all 0.3s;
         }
         .btn-previous {
-            background: #6c757d;
-            color: white;
+            background: #ffffff;
+            color: #000;
         }
         .btn-previous:hover {
-            background: #5a6268;
+            background: #e0e0e0;
         }
         .btn-next {
-            background: #667eea;
-            color: white;
+            background: #ffffff;
+            color: #000;
         }
         .btn-next:hover {
-            background: #5568d3;
+            background: #e0e0e0;
         }
         .btn-submit {
-            background: #28a745;
-            color: white;
+            background: #ffffff;
+            color: #000;
         }
         .btn-submit:hover {
-            background: #218838;
+            background: #e0e0e0;
         }
         .btn:disabled {
             opacity: 0.5;
@@ -192,17 +200,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
         .warning-box {
-            background: white;
+            background: #1a1a1a;
             padding: 40px;
             border-radius: 10px;
             text-align: center;
             max-width: 500px;
+            border: 2px solid #e74c3c;
         }
         .warning-box h2 {
             color: #e74c3c;
@@ -211,21 +220,42 @@
         .warning-box p {
             margin-bottom: 20px;
             font-size: 16px;
+            color: #e0e0e0;
         }
         .btn-understood {
-            background: #e74c3c;
-            color: white;
+            background: #ffffff;
+            color: #000;
             padding: 12px 30px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
         }
+        .btn-understood:hover {
+            background: #e0e0e0;
+        }
         
         /* Custom Confirmation Dialog */
         .custom-modal {
             display: none;
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+            border: 2px solid #444;
+        }
             top: 0;
             left: 0;
             width: 100%;
@@ -343,20 +373,36 @@
                 <div class="question-number">Question <%= currentIndex + 1 %></div>
                 <div class="question-text"><%= currentQuestion.getQuestionText() %></div>
                 
-                <ul class="options">
-                    <% 
-                        List<String> options = currentQuestion.getOptions();
-                        for (int i = 0; i < options.size(); i++) {
-                            String optionLabel = (char)('A' + i) + "";
-                    %>
-                    <li class="option-item">
-                        <label class="option-label">
-                            <input type="radio" name="answer" value="<%= i %>" required>
-                            <span><strong><%= optionLabel %>.</strong> <%= options.get(i) %></span>
+                <% if (currentQuestion.isNumerical()) { %>
+                    <!-- Numerical Answer Input -->
+                    <div class="numerical-answer-section" style="margin-top: 30px;">
+                        <label for="numerical_answer" style="display: block; font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">
+                            Enter your numerical answer:
                         </label>
-                    </li>
-                    <% } %>
-                </ul>
+                        <input type="number" 
+                               step="0.01" 
+                               name="numerical_answer" 
+                               id="numerical_answer" 
+                               required
+                               style="width: 100%; max-width: 400px; padding: 15px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; outline: none; transition: border-color 0.3s;">
+                    </div>
+                <% } else { %>
+                    <!-- Multiple Choice Options -->
+                    <ul class="options">
+                        <% 
+                            List<String> options = currentQuestion.getOptions();
+                            for (int i = 0; i < options.size(); i++) {
+                                String optionLabel = (char)('A' + i) + "";
+                        %>
+                        <li class="option-item">
+                            <label class="option-label">
+                                <input type="radio" name="answer" value="<%= i %>" required>
+                                <span><strong><%= optionLabel %>.</strong> <%= options.get(i) %></span>
+                            </label>
+                        </li>
+                        <% } %>
+                    </ul>
+                <% } %>
                 
                 <div class="navigation-buttons">
                     <% if (currentIndex > 0) { %>

@@ -6,6 +6,7 @@ CREATE TYPE user_role AS ENUM ('student', 'admin');
 CREATE TYPE quiz_status AS ENUM ('in_progress', 'completed', 'auto_submitted');
 CREATE TYPE difficulty_level AS ENUM ('easy', 'medium', 'hard');
 CREATE TYPE severity_level AS ENUM ('INFO', 'WARNING', 'CRITICAL');
+CREATE TYPE question_type AS ENUM ('multiple_choice', 'numerical');
 
 -- Users Table
 CREATE TABLE users (
@@ -23,11 +24,14 @@ CREATE TABLE users (
 CREATE TABLE questions (
     id SERIAL PRIMARY KEY,
     question_text TEXT NOT NULL,
-    option_a VARCHAR(255) NOT NULL,
-    option_b VARCHAR(255) NOT NULL,
-    option_c VARCHAR(255) NOT NULL,
-    option_d VARCHAR(255) NOT NULL,
-    correct_answer INT NOT NULL, -- 0=A, 1=B, 2=C, 3=D
+    question_type question_type DEFAULT 'multiple_choice',
+    option_a VARCHAR(255),
+    option_b VARCHAR(255),
+    option_c VARCHAR(255),
+    option_d VARCHAR(255),
+    correct_answer INT, -- 0=A, 1=B, 2=C, 3=D (for multiple choice)
+    numerical_answer DECIMAL(10,2), -- For numerical questions
+    answer_tolerance DECIMAL(10,2) DEFAULT 0, -- Acceptable margin of error for numerical answers
     difficulty difficulty_level DEFAULT 'medium',
     category VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -56,7 +60,8 @@ CREATE TABLE quiz_answers (
     id SERIAL PRIMARY KEY,
     quiz_id VARCHAR(50) NOT NULL,
     question_id INT NOT NULL,
-    selected_answer INT,
+    selected_answer INT, -- For multiple choice (0-3)
+    numerical_answer DECIMAL(10,2), -- For numerical questions
     is_correct BOOLEAN,
     answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
@@ -182,11 +187,14 @@ CREATE TABLE IF NOT EXISTS quiz_questions (
     quiz_id INT NOT NULL REFERENCES quizzes_master(id) ON DELETE CASCADE,
     question_id INT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
+    question_type VARCHAR(20) DEFAULT 'multiple_choice',
     option_a TEXT,
     option_b TEXT,
     option_c TEXT,
     option_d TEXT,
     correct_option CHAR(1) DEFAULT 'A',
+    numerical_answer DECIMAL(10,2),
+    answer_tolerance DECIMAL(10,2) DEFAULT 0,
     UNIQUE(quiz_id, question_id)
 );
 

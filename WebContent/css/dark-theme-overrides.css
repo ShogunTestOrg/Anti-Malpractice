@@ -1,0 +1,201 @@
+/* Dark Theme Overrides for Inline Styles */
+
+/* Override body backgrounds */
+body {
+    background: #000000 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Override header styles */
+.header {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #333333;
+}
+
+/* Override white backgrounds */
+.welcome-section,
+.search-section,
+.quiz-card,
+.no-quizzes,
+.card {
+    background: #1a1a1a !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05) !important;
+}
+
+.quiz-card:hover {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Override text colors */
+.welcome-section h2,
+.quiz-title,
+.no-quizzes h3,
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+
+.welcome-section p,
+.quiz-description,
+.quiz-meta,
+.no-quizzes,
+p {
+    color: #b0b0b0 !important;
+}
+
+/* Override form inputs */
+.search-box,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+    background: #1a1a1a !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444444 !important;
+}
+
+.search-box:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Override button styles to match new theme */
+.logout-btn {
+    background: #f44336 !important;
+    color: #ffffff !important;
+}
+
+.btn-start {
+    background: #4caf50 !important;
+    color: #ffffff !important;
+}
+
+.btn-start:hover {
+    background: #66bb6a !important;
+}
+
+.btn-start:disabled {
+    background: #333333 !important;
+    color: #666666 !important;
+}
+
+/* Override badges */
+.attempted-badge {
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+.difficulty-badge {
+    background: #333333 !important;
+    color: #ffffff !important;
+}
+
+/* Override stat items */
+.stat-item {
+    color: #b0b0b0 !important;
+}
+
+/* Override table hover states */
+table tbody tr:hover {
+    background: #2a2a2a !important;
+}
+
+/* Override links */
+a {
+    color: #ffffff !important;
+}
+
+a:hover {
+    color: #d0d0d0 !important;
+}
+
+/* Radio buttons and checkboxes */
+input[type="radio"],
+input[type="checkbox"] {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Labels */
+label {
+    color: #e0e0e0 !important;
+}
+
+/* Quiz options */
+.option-label {
+    background: #1a1a1a !important;
+    border: 1px solid #444444 !important;
+    color: #e0e0e0 !important;
+}
+
+.option-label:hover {
+    background: #2a2a2a !important;
+    border-color: #ffffff !important;
+}
+
+input[type="radio"]:checked + .option-label {
+    background: #333333 !important;
+    border-color: #ffffff !important;
+}
+
+/* Status indicators */
+.status-active {
+    color: #4caf50 !important;
+}
+
+.status-inactive {
+    color: #f44336 !important;
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+/* Selection color */
+::selection {
+    background: #ffffff;
+    color: #000000;
+}
+
+::-moz-selection {
+    background: #ffffff;
+    color: #000000;
+}
+
+/* Modal and overlay backgrounds */
+.modal,
+.overlay {
+    background: rgba(0, 0, 0, 0.9) !important;
+}
+
+.modal-content {
+    background: #1a1a1a !important;
+    border: 1px solid #333333 !important;
+}
+
+/* Footer */
+.footer {
+    background: #1a1a1a !important;
+    color: #b0b0b0 !important;
+    border-top: 1px solid #333333;
+}

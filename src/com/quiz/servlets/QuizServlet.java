@@ -195,28 +195,55 @@ public class QuizServlet extends HttpServlet {
 
                 // Then load questions
                 try (PreparedStatement qPstmt = qConn.prepareStatement(
-                    "SELECT question_id, question_text, option_a, option_b, option_c, option_d, correct_option " +
+                    "SELECT question_id, question_text, option_a, option_b, option_c, option_d, correct_option, " +
+                    "question_type, numerical_answer, answer_tolerance " +
                     "FROM quiz_questions WHERE quiz_id = ? ORDER BY question_id ASC")) {
                     qPstmt.setInt(1, quizTemplateId);
                     try (ResultSet qRs = qPstmt.executeQuery()) {
                         while (qRs.next()) {
                             String text = qRs.getString("question_text");
-                            List<String> opts = new ArrayList<>();
-                            opts.add(qRs.getString("option_a").trim());
-                            opts.add(qRs.getString("option_b").trim());
-                            opts.add(qRs.getString("option_c").trim());
-                            opts.add(qRs.getString("option_d").trim());
-                            String correct = qRs.getString("correct_option").trim().toUpperCase();
-                            int correctIdx;
-                            switch (correct) {
-                                case "A": correctIdx = 0; break;
-                                case "B": correctIdx = 1; break;
-                                case "C": correctIdx = 2; break;
-                                case "D": correctIdx = 3; break;
-                                default: correctIdx = 0;
+                            String questionType = qRs.getString("question_type");
+                            int questionId = qRs.getInt("question_id");
+                            
+                            if ("numerical".equalsIgnoreCase(questionType)) {
+                                // Create numerical question
+                                double numericalAnswer = qRs.getDouble("numerical_answer");
+                                double tolerance = qRs.getDouble("answer_tolerance");
+                                Question q = new Question(questionId, text, new ArrayList<>(), 0);
+                                q.setQuestionType("numerical");
+                                q.setNumericalAnswer(numericalAnswer);
+                                q.setAnswerTolerance(tolerance);
+                                questions.add(q);
+                                Logger.logDebug("Added numerical question: " + text);
+                            } else {
+                                // Create multiple choice question
+                                List<String> opts = new ArrayList<>();
+                                String optA = qRs.getString("option_a");
+                                String optB = qRs.getString("option_b");
+                                String optC = qRs.getString("option_c");
+                                String optD = qRs.getString("option_d");
+                                String correct = qRs.getString("correct_option");
+                                
+                                opts.add(optA != null ? optA.trim() : "");
+                                opts.add(optB != null ? optB.trim() : "");
+                                opts.add(optC != null ? optC.trim() : "");
+                                opts.add(optD != null ? optD.trim() : "");
+                                
+                                int correctIdx = 0;
+                                if (correct != null) {
+                                    correct = correct.trim().toUpperCase();
+                                    switch (correct) {
+                                        case "B": correctIdx = 1; break;
+                                        case "C": correctIdx = 2; break;
+                                        case "D": correctIdx = 3; break;
+                                        default: correctIdx = 0;
+                                    }
+                                }
+                                Question q = new Question(questionId, text, opts, correctIdx);
+                                q.setQuestionType("multiple_choice");
+                                questions.add(q);
+                                Logger.logDebug("Added multiple choice question: " + text);
                             }
-                            questions.add(new Question(qRs.getInt("question_id"), text, opts, correctIdx));
-                            Logger.logDebug("Added question: " + text);
                         }
                     }
                 }
@@ -258,14 +285,18 @@ public class QuizServlet extends HttpServlet {
         
         Logger.logDebug("=== PROCESS ANSWER ===");
         String answerStr = request.getParameter("answer");
+        String numericalAnswerStr = request.getParameter("numerical_answer");
         Integer currentIndex = (Integer) session.getAttribute(ATTR_CURRENT_INDEX);
         
-        Logger.logDebug("Answer: " + answerStr);
+        Logger.logDebug("MC Answer: " + answerStr);
+        Logger.logDebug("Numerical Answer: " + numericalAnswerStr);
         Logger.logDebug("Current Index: " + currentIndex);
         
-        if (answerStr != null && currentIndex != null) {
+        if (currentIndex != null) {
             @SuppressWarnings("unchecked")
             Map<Integer, Integer> answers = (Map<Integer, Integer>) session.getAttribute(ATTR_ANSWERS);
+            @SuppressWarnings("unchecked")
+            Map<Integer, Double> numericalAnswers = (Map<Integer, Double>) session.getAttribute("numericalAnswers");
             
             if (answers == null) {
                 answers = new HashMap<>();
@@ -273,10 +304,31 @@ public class QuizServlet extends HttpServlet {
                 Logger.logDebug("Created new answers map");
             }
             
-            answers.put(currentIndex, Integer.parseInt(answerStr));
-            Logger.logDebug("Stored answer " + answerStr + " for question " + currentIndex);
+            if (numericalAnswers == null) {
+                numericalAnswers = new HashMap<>();
+                session.setAttribute("numericalAnswers", numericalAnswers);
+                Logger.logDebug("Created new numerical answers map");
+            }
+            
+            // Handle numerical answer
+            if (numericalAnswerStr != null && !numericalAnswerStr.trim().isEmpty()) {
+                try {
+                    double numericalAnswer = Double.parseDouble(numericalAnswerStr);
+                    numericalAnswers.put(currentIndex, numericalAnswer);
+                    Logger.logDebug("Stored numerical answer " + numericalAnswer + " for question " + currentIndex);
+                } catch (NumberFormatException e) {
+                    Logger.logError("Invalid numerical answer format: " + numericalAnswerStr, e);
+                }
+            }
+            // Handle multiple choice answer
+            else if (answerStr != null) {
+                answers.put(currentIndex, Integer.parseInt(answerStr));
+                Logger.logDebug("Stored MC answer " + answerStr + " for question " + currentIndex);
+            } else {
+                Logger.logDebug("No answer provided");
+            }
         } else {
-            Logger.logDebug("No answer provided or currentIndex is null");
+            Logger.logDebug("currentIndex is null");
         }
         Logger.logDebug("=== PROCESS ANSWER COMPLETED ===");
     }
@@ -344,15 +396,40 @@ public class QuizServlet extends HttpServlet {
         @SuppressWarnings("unchecked")
         Map<Integer, Integer> answers = (Map<Integer, Integer>) session.getAttribute("answers");
         @SuppressWarnings("unchecked")
+        Map<Integer, Double> numericalAnswers = (Map<Integer, Double>) session.getAttribute("numericalAnswers");
+        @SuppressWarnings("unchecked")
         List<Question> questions = (List<Question>) session.getAttribute("questions");
         
         // Calculate score
         int score = 0;
-        if (answers != null && questions != null) {
+        if (questions != null) {
             for (int i = 0; i < questions.size(); i++) {
-                Integer answer = answers.get(i);
-                if (answer != null && answer == questions.get(i).getCorrectAnswer()) {
-                    score++;
+                Question question = questions.get(i);
+                
+                if (question.isNumerical()) {
+                    // Check numerical answer
+                    if (numericalAnswers != null) {
+                        Double studentAnswer = numericalAnswers.get(i);
+                        if (studentAnswer != null && question.checkNumericalAnswer(studentAnswer)) {
+                            score++;
+                            Logger.logDebug("Question " + i + " (numerical) correct: " + studentAnswer);
+                        } else {
+                            Logger.logDebug("Question " + i + " (numerical) incorrect: " + studentAnswer + 
+                                          " (expected: " + question.getNumericalAnswer() + " ±" + question.getAnswerTolerance() + ")");
+                        }
+                    }
+                } else {
+                    // Check multiple choice answer
+                    if (answers != null) {
+                        Integer answer = answers.get(i);
+                        if (answer != null && answer == question.getCorrectAnswer()) {
+                            score++;
+                            Logger.logDebug("Question " + i + " (MC) correct: " + answer);
+                        } else {
+                            Logger.logDebug("Question " + i + " (MC) incorrect: " + answer + 
+                                          " (expected: " + question.getCorrectAnswer() + ")");
+                        }
+                    }
                 }
             }
         }
