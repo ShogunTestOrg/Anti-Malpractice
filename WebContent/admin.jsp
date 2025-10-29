@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.io.*, java.sql.*, java.text.*" %>
+<%@ page import="com.quiz.utils.DatabaseConnection" %>
 <%
     // Check admin session
     String username = (String) session.getAttribute("username");
@@ -208,12 +209,7 @@
             ResultSet statsRs = null;
             
             try {
-                Class.forName("org.postgresql.Driver");
-                statsConn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/quiz_system", 
-                    "postgres", 
-                    "1234"
-                );
+                statsConn = DatabaseConnection.getConnection();
                 statsStmt = statsConn.createStatement();
                 
                 // Count active students (students who have logged in)
@@ -313,12 +309,7 @@
                         ResultSet rs = null;
                         
                         try {
-                            Class.forName("org.postgresql.Driver");
-                            conn = DriverManager.getConnection(
-                                "jdbc:postgresql://localhost:5432/quiz_system", 
-                                "postgres", 
-                                "1234"
-                            );
+                            conn = DatabaseConnection.getConnection();
                             
                             String sql = "SELECT timestamp, username, quiz_id, violation_type, description, severity " +
                                         "FROM violations ORDER BY timestamp DESC LIMIT 20";
@@ -392,12 +383,7 @@
                         ResultSet rs2 = null;
                         
                         try {
-                            Class.forName("org.postgresql.Driver");
-                            conn2 = DriverManager.getConnection(
-                                "jdbc:postgresql://localhost:5432/quiz_system", 
-                                "postgres", 
-                                "1234"
-                            );
+                            conn2 = DatabaseConnection.getConnection();
                             
                             String sql2 = "SELECT q.quiz_id, u.username, q.start_time, q.status, " +
                                          "(SELECT COUNT(*) FROM violations v WHERE v.quiz_id = q.quiz_id) as violation_count " +

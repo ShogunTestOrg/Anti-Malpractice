@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.io.*, java.sql.*, java.text.*" %>
+<%@ page import="com.quiz.utils.DatabaseConnection" %>
 <%
     // Check admin session
     String username = (String) session.getAttribute("username");
@@ -188,12 +189,7 @@
                 ResultSet rs = null;
                 
                 try {
-                    Class.forName("org.postgresql.Driver");
-                    conn = DriverManager.getConnection(
-                        "jdbc:postgresql://localhost:5432/quiz_system", 
-                        "postgres", 
-                        "1234"
-                    );
+                    conn = DatabaseConnection.getConnection();
                     
                     String sql = "SELECT title, description, time_limit FROM quizzes_master WHERE id = ?";
                     pstmt = conn.prepareStatement(sql);

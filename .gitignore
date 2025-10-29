@@ -74,6 +74,8 @@ build/
 # Database credentials (if separated)
 database.properties
 *.env
+setenv.bat
+setenv.sh
 
 # Backup files
 *.bak

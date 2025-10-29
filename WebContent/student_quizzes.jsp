@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.io.*, java.sql.*, java.text.*" %>
+<%@ page import="com.quiz.utils.DatabaseConnection" %>
 <%
     // Check student session
     String username = (String) session.getAttribute("username");
@@ -221,12 +222,7 @@
                 ResultSet rs = null;
                 
                 try {
-                    Class.forName("org.postgresql.Driver");
-                    conn = DriverManager.getConnection(
-                        "jdbc:postgresql://localhost:5432/quiz_system", 
-                        "postgres", 
-                        "1234"
-                    );
+                    conn = DatabaseConnection.getConnection();
                     
                     // Get user ID
                     String getUserIdSql = "SELECT id FROM users WHERE username = ?";

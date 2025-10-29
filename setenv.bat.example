@@ -1,0 +1,11 @@
+# Example setenv.bat file - DO NOT COMMIT THE ACTUAL setenv.bat!
+# Copy this to setenv.bat and fill in your actual credentials
+
+@echo off
+REM Set Database Environment Variables for Tomcat
+
+set DB_URL=jdbc:postgresql://your-host:port/database_name?sslmode=require
+set DB_USERNAME=your_username
+set DB_PASSWORD=your_password
+
+echo Database environment variables set successfully!

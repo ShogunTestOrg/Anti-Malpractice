@@ -1,10 +1,6 @@
 -- Database Schema for Online Quiz Anti-Malpractice System
 -- PostgreSQL
 
--- Create database (run this separately as postgres superuser)
-CREATE DATABASE quiz_system;
-\c quiz_system;
-
 -- Create ENUM types
 CREATE TYPE user_role AS ENUM ('student', 'admin');
 CREATE TYPE quiz_status AS ENUM ('in_progress', 'completed', 'auto_submitted');
@@ -81,9 +77,9 @@ CREATE TABLE violations (
 );
 
 -- Create indexes for violations table
-CREATE INDEX idx_quiz_id ON violations(quiz_id);
-CREATE INDEX idx_username ON violations(username);
-CREATE INDEX idx_timestamp ON violations(timestamp);
+CREATE INDEX idx_violations_quiz_id ON violations(quiz_id);
+CREATE INDEX idx_violations_username ON violations(username);
+CREATE INDEX idx_violations_timestamp ON violations(timestamp);
 
 -- Session Logs Table
 CREATE TABLE session_logs (
@@ -98,8 +94,8 @@ CREATE TABLE session_logs (
 );
 
 -- Create indexes for session_logs table
-CREATE INDEX idx_user_id ON session_logs(user_id);
-CREATE INDEX idx_quiz_id ON session_logs(quiz_id);
+CREATE INDEX idx_session_logs_user_id ON session_logs(user_id);
+CREATE INDEX idx_session_logs_quiz_id ON session_logs(quiz_id);
 
 -- Insert Sample Data
 
@@ -121,7 +117,17 @@ INSERT INTO questions (question_text, option_a, option_b, option_c, option_d, co
 ('How many continents are there?', '5', '6', '7', '8', 2, 'Geography'),
 ('What is the smallest prime number?', '0', '1', '2', '3', 2, 'Mathematics'),
 ('Which programming language is used for Android development?', 'Python', 'Java', 'C++', 'Ruby', 1, 'Technology'),
-('What year did World War II end?', '1943', '1944', '1945', '1946', 2, 'History');
+('What year did World War II end?', '1943', '1944', '1945', '1946', 2, 'History'),
+('What is the chemical symbol for water?', 'H2O', 'CO2', 'O2', 'NaCl', 0, 'Chemistry'),
+('How many bones are in the human body?', '206', '208', '210', '212', 0, 'Science'),
+('What gas do plants absorb from the atmosphere?', 'Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen', 2, 'Science'),
+('What is the speed of light?', '299,792,458 m/s', '300,000,000 m/s', '299,000,000 m/s', '300,792,458 m/s', 0, 'Science'),
+('What is the hardest natural substance?', 'Gold', 'Iron', 'Diamond', 'Platinum', 2, 'Science'),
+('In which year did World War II end?', '1943', '1944', '1945', '1946', 2, 'History'),
+('Who was the first President of the United States?', 'Thomas Jefferson', 'John Adams', 'George Washington', 'Benjamin Franklin', 2, 'History'),
+('Which empire was ruled by Julius Caesar?', 'Greek Empire', 'Roman Empire', 'Byzantine Empire', 'Ottoman Empire', 1, 'History'),
+('In which year did the Berlin Wall fall?', '1987', '1988', '1989', '1990', 2, 'History'),
+('Who painted the Mona Lisa?', 'Michelangelo', 'Leonardo da Vinci', 'Raphael', 'Donatello', 1, 'Art');
 
 -- Create Views for Reports
 

@@ -12,9 +12,16 @@ public class DatabaseConnection {
     
     // Database configuration
     private static final String DRIVER = "org.postgresql.Driver";
-    private static final String URL = "jdbc:postgresql://localhost:5432/quiz_system";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "1234"; // Update with your PostgreSQL password
+    // Read from environment variables for security (never commit credentials to Git)
+    private static final String URL = System.getenv("DB_URL") != null 
+        ? System.getenv("DB_URL") 
+        : "jdbc:postgresql://localhost:5432/quiz_system"; // fallback for local development
+    private static final String USERNAME = System.getenv("DB_USERNAME") != null 
+        ? System.getenv("DB_USERNAME") 
+        : "postgres"; // fallback for local development
+    private static final String PASSWORD = System.getenv("DB_PASSWORD") != null 
+        ? System.getenv("DB_PASSWORD") 
+        : ""; // fallback for local development
     
     // Connection pool settings (for production)
     private static final int MAX_POOL_SIZE = 10;
