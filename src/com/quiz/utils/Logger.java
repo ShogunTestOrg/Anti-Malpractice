@@ -23,7 +23,7 @@ public class Logger {
             System.out.println("Database connection obtained: " + (conn != null ? "SUCCESS" : "FAILED"));
             
             String sql = "INSERT INTO violations (quiz_id, username, violation_type, description, severity, timestamp) " +
-                        "VALUES (?, ?, ?, ?, CAST(? AS severity_level), ?)";
+                        "VALUES (?, ?, CAST(? AS violation_type_enum), ?, CAST(? AS severity_level), ?)";
             
             System.out.println("Preparing SQL statement...");
             pstmt = conn.prepareStatement(sql);

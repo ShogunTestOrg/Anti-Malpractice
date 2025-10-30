@@ -42,7 +42,14 @@ public class DeleteQuizServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false); // Start transaction
             
-            // Delete quiz attempts first (foreign key constraint)
+            // Delete violations first (if any violations reference this quiz)
+            String deleteViolationsSql = "DELETE FROM violations WHERE quiz_id = ?";
+            pstmt = conn.prepareStatement(deleteViolationsSql);
+            pstmt.setString(1, String.valueOf(quizId)); // violations.quiz_id is VARCHAR
+            pstmt.executeUpdate();
+            pstmt.close();
+            
+            // Delete quiz attempts (foreign key constraint)
             String deleteAttemptsSql = "DELETE FROM quiz_attempts WHERE quiz_id = ?";
             pstmt = conn.prepareStatement(deleteAttemptsSql);
             pstmt.setInt(1, quizId);
@@ -52,13 +59,6 @@ public class DeleteQuizServlet extends HttpServlet {
             // Delete quiz questions
             String deleteQuestionsSql = "DELETE FROM quiz_questions WHERE quiz_id = ?";
             pstmt = conn.prepareStatement(deleteQuestionsSql);
-            pstmt.setInt(1, quizId);
-            pstmt.executeUpdate();
-            pstmt.close();
-            
-            // Delete quiz results
-            String deleteResultsSql = "DELETE FROM quiz_results WHERE quiz_id = ?";
-            pstmt = conn.prepareStatement(deleteResultsSql);
             pstmt.setInt(1, quizId);
             pstmt.executeUpdate();
             pstmt.close();

@@ -241,69 +241,15 @@
                     <textarea id="description" name="description" placeholder="Enter a brief description of the quiz..."></textarea>
                 </div>
                 
-                <div class="questions-section">
-                    <h3>Select Questions</h3>
-                    <p style="color: #7f8c8d; margin-bottom: 15px;">Choose questions from the existing question bank:</p>
-                    
-                    <div class="question-list">
-                        <%
-                            // Load questions from database
-                            Connection conn = null;
-                            PreparedStatement pstmt = null;
-                            ResultSet rs = null;
-                            
-                            try {
-                                conn = DatabaseConnection.getConnection();
-                                
-                                String sql = "SELECT id, question_text, category FROM questions ORDER BY category, id";
-                                pstmt = conn.prepareStatement(sql);
-                                rs = pstmt.executeQuery();
-                                
-                                boolean hasQuestions = false;
-                                while (rs.next()) {
-                                    hasQuestions = true;
-                                    int questionId = rs.getInt("id");
-                                    String questionText = rs.getString("question_text");
-                                    String category = rs.getString("category");
-                        %>
-                        <div class="question-item">
-                            <input type="checkbox" id="question_<%= questionId %>" name="selected_questions" value="<%= questionId %>">
-                            <label for="question_<%= questionId %>" class="question-text">
-                                <%= questionText %>
-                                <span class="question-category">[<%= category != null ? category : "General" %>]</span>
-                            </label>
-                        </div>
-                        <%
-                                }
-                                
-                                if (!hasQuestions) {
-                        %>
-                        <div style="text-align: center; padding: 20px; color: #b0b0b0;">
-                            No questions available. Please add questions to the question bank first.
-                        </div>
-                        <%
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                        %>
-                        <div style="text-align: center; padding: 20px; color: #ff6b6b;">
-                            Error loading questions: <%= e.getMessage() %>
-                        </div>
-                        <%
-                            } finally {
-                                try {
-                                    if (rs != null) rs.close();
-                                    if (pstmt != null) pstmt.close();
-                                    if (conn != null) conn.close();
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        %>
-                    </div>
+                <div class="info-section" style="background: #1e3a1e; border: 1px solid #4CAF50; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                    <h3 style="color: #4CAF50; margin-bottom: 10px;">📝 Next Step</h3>
+                    <p style="color: #b0b0b0; line-height: 1.6;">
+                        After creating this quiz, you'll be redirected to add questions to it. 
+                        You can add multiple choice or numerical questions one by one.
+                    </p>
                 </div>
                 
-                <button type="submit" class="btn-submit">Create Quiz</button>
+                <button type="submit" class="btn-submit">Create Quiz & Add Questions</button>
             </form>
         </div>
     </div>
@@ -311,13 +257,6 @@
     <script>
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {
-            const selectedQuestions = document.querySelectorAll('input[name="selected_questions"]:checked');
-            if (selectedQuestions.length === 0) {
-                e.preventDefault();
-                alert('Please select at least one question for the quiz.');
-                return false;
-            }
-            
             const title = document.getElementById('title').value.trim();
             const timeLimit = document.getElementById('time_limit').value;
             
@@ -333,15 +272,6 @@
                 return false;
             }
         });
-        
-        // Select all questions checkbox
-        function toggleAllQuestions() {
-            const checkboxes = document.querySelectorAll('input[name="selected_questions"]');
-            const selectAll = document.getElementById('selectAll');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-            });
-        }
     </script>
 </body>
 </html>

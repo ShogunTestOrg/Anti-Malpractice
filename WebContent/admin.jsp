@@ -242,12 +242,12 @@
                 statsRs.close();
                 
                 // Count completed quizzes
-                statsRs = statsStmt.executeQuery("SELECT COUNT(*) FROM quizzes WHERE status = 'completed'");
+                statsRs = statsStmt.executeQuery("SELECT COUNT(*) FROM quiz_attempts WHERE status = 'completed'");
                 if (statsRs.next()) completedQuizzes = statsRs.getInt(1);
                 statsRs.close();
                 
                 // Count active quizzes
-                statsRs = statsStmt.executeQuery("SELECT COUNT(*) FROM quizzes WHERE status = 'in_progress'");
+                statsRs = statsStmt.executeQuery("SELECT COUNT(*) FROM quiz_attempts WHERE status = 'in_progress'");
                 if (statsRs.next()) activeQuizzes = statsRs.getInt(1);
                 
             } catch (Exception e) {
@@ -404,12 +404,12 @@
                         try {
                             conn2 = DatabaseConnection.getConnection();
                             
-                            String sql2 = "SELECT q.quiz_id, u.username, q.start_time, q.status, " +
-                                         "(SELECT COUNT(*) FROM violations v WHERE v.quiz_id = q.quiz_id) as violation_count " +
-                                         "FROM quizzes q " +
-                                         "JOIN users u ON q.user_id = u.id " +
-                                         "WHERE q.status = 'in_progress' " +
-                                         "ORDER BY q.start_time DESC";
+                            String sql2 = "SELECT qa.quiz_instance_id as quiz_id, u.username, qa.start_time, qa.status, " +
+                                         "(SELECT COUNT(*) FROM violations v WHERE v.quiz_id = qa.quiz_instance_id) as violation_count " +
+                                         "FROM quiz_attempts qa " +
+                                         "JOIN users u ON qa.student_id = u.id " +
+                                         "WHERE qa.status = 'in_progress' " +
+                                         "ORDER BY qa.start_time DESC";
                             pstmt2 = conn2.prepareStatement(sql2);
                             rs2 = pstmt2.executeQuery();
                             

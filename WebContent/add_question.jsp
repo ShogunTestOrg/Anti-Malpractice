@@ -219,6 +219,49 @@
             
             <h2>Question Details</h2>
             <form action="add-question" method="POST" id="questionForm">
+                <!-- Quiz Selection -->
+                <div class="form-group">
+                    <label for="quiz_id">Select Quiz <span class="required">*</span></label>
+                    <select id="quiz_id" name="quiz_id" required>
+                        <option value="">-- Select a Quiz --</option>
+                        <%
+                            // Load available quizzes from database
+                            Connection conn = null;
+                            PreparedStatement pstmt = null;
+                            ResultSet rs = null;
+                            String selectedQuizId = request.getParameter("quiz_id");
+                            
+                            try {
+                                conn = com.quiz.utils.DatabaseConnection.getConnection();
+                                String sql = "SELECT id, title FROM quizzes_master ORDER BY created_at DESC";
+                                pstmt = conn.prepareStatement(sql);
+                                rs = pstmt.executeQuery();
+                                
+                                while (rs.next()) {
+                                    int qid = rs.getInt("id");
+                                    String qtitle = rs.getString("title");
+                                    boolean isSelected = selectedQuizId != null && selectedQuizId.equals(String.valueOf(qid));
+                        %>
+                        <option value="<%= qid %>" <%= isSelected ? "selected" : "" %>><%= qtitle %></option>
+                        <%
+                                }
+                            } catch (Exception e) {
+                                out.println("<option value=''>Error loading quizzes</option>");
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (rs != null) rs.close();
+                                    if (pstmt != null) pstmt.close();
+                                    if (conn != null) conn.close();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        %>
+                    </select>
+                    <small style="color: #888;">Select the quiz to add this question to, or <a href="create_quiz.jsp" style="color: #4CAF50;">create a new quiz</a></small>
+                </div>
+                
                 <div class="form-group">
                     <label for="question_type">Question Type <span class="required">*</span></label>
                     <select id="question_type" name="question_type" onchange="toggleQuestionType()" required>

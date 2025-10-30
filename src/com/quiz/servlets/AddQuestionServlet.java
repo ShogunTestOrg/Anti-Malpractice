@@ -52,6 +52,7 @@ public class AddQuestionServlet extends HttpServlet {
         }
         
         // Get form parameters
+        String quizIdStr = request.getParameter("quiz_id");
         String questionText = request.getParameter("question_text");
         String questionType = request.getParameter("question_type");
         String optionA = request.getParameter("option_a");
@@ -63,6 +64,20 @@ public class AddQuestionServlet extends HttpServlet {
         String answerToleranceStr = request.getParameter("answer_tolerance");
         String category = request.getParameter("category");
         String difficulty = request.getParameter("difficulty");
+        
+        // Validate quiz ID
+        if (quizIdStr == null || quizIdStr.trim().isEmpty()) {
+            response.sendRedirect("add_question.jsp?error=Quiz ID is required");
+            return;
+        }
+        
+        int quizId;
+        try {
+            quizId = Integer.parseInt(quizIdStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("add_question.jsp?error=Invalid quiz ID");
+            return;
+        }
         
         // Set defaults
         if (questionType == null || questionType.trim().isEmpty()) {
@@ -144,33 +159,44 @@ public class AddQuestionServlet extends HttpServlet {
             
             // Insert question based on type
             if ("numerical".equals(questionType)) {
-                // Insert numerical question
-                String insertQuestionSql = "INSERT INTO questions (question_text, question_type, numerical_answer, answer_tolerance, category, difficulty) VALUES (?, ?::question_type, ?, ?, ?, ?)";
+                // Insert numerical question into quiz_questions
+                String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_text, question_type, numerical_answer, answer_tolerance, difficulty) " +
+                                         "VALUES (?, ?, CAST(? AS question_type_enum), ?, ?, CAST(? AS difficulty_level))";
                 pstmt = conn.prepareStatement(insertQuestionSql);
-                pstmt.setString(1, questionText.trim());
-                pstmt.setString(2, questionType);
-                pstmt.setDouble(3, Double.parseDouble(numericalAnswerStr));
+                pstmt.setInt(1, quizId);
+                pstmt.setString(2, questionText.trim());
+                pstmt.setString(3, questionType);
+                pstmt.setDouble(4, Double.parseDouble(numericalAnswerStr));
                 
                 if (answerToleranceStr != null && !answerToleranceStr.trim().isEmpty()) {
-                    pstmt.setDouble(4, Double.parseDouble(answerToleranceStr));
+                    pstmt.setDouble(5, Double.parseDouble(answerToleranceStr));
                 } else {
-                    pstmt.setDouble(4, 0.0);
+                    pstmt.setDouble(5, 0.01); // Default tolerance
                 }
                 
-                pstmt.setString(5, category.trim());
                 pstmt.setString(6, difficulty);
             } else {
-                // Insert multiple choice question
-                String insertQuestionSql = "INSERT INTO questions (question_text, question_type, option_a, option_b, option_c, option_d, correct_answer, category, difficulty) VALUES (?, ?::question_type, ?, ?, ?, ?, ?, ?, ?)";
+                // Insert multiple choice question into quiz_questions
+                // Convert correctAnswer (0,1,2,3) to correct_option (A,B,C,D)
+                String correctOption = "A";
+                switch (correctAnswer) {
+                    case 0: correctOption = "A"; break;
+                    case 1: correctOption = "B"; break;
+                    case 2: correctOption = "C"; break;
+                    case 3: correctOption = "D"; break;
+                }
+                
+                String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_text, question_type, option_a, option_b, option_c, option_d, correct_option, difficulty) " +
+                                         "VALUES (?, ?, CAST(? AS question_type_enum), ?, ?, ?, ?, ?, CAST(? AS difficulty_level))";
                 pstmt = conn.prepareStatement(insertQuestionSql);
-                pstmt.setString(1, questionText.trim());
-                pstmt.setString(2, questionType);
-                pstmt.setString(3, optionA.trim());
-                pstmt.setString(4, optionB.trim());
-                pstmt.setString(5, optionC.trim());
-                pstmt.setString(6, optionD.trim());
-                pstmt.setInt(7, correctAnswer);
-                pstmt.setString(8, category.trim());
+                pstmt.setInt(1, quizId);
+                pstmt.setString(2, questionText.trim());
+                pstmt.setString(3, questionType);
+                pstmt.setString(4, optionA.trim());
+                pstmt.setString(5, optionB.trim());
+                pstmt.setString(6, optionC.trim());
+                pstmt.setString(7, optionD.trim());
+                pstmt.setString(8, correctOption);
                 pstmt.setString(9, difficulty);
             }
             

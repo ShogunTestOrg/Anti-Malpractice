@@ -2,74 +2,94 @@
 erDiagram
     users {
         int id PK
-        varchar username
-        varchar password
-        varchar email
+        varchar username UK
+        varchar password_hash
         user_role role "ENUM('student', 'admin')"
+        boolean is_active
         timestamp created_at
         timestamp last_login
+    }
+
+    quizzes_master {
+        int id PK
+        varchar title
+        text description
+        int time_limit "in minutes"
+        timestamp created_at
+        int created_by FK
         boolean is_active
     }
 
-    questions {
-        int id PK
+    quiz_questions {
+        int question_id PK
+        int quiz_id FK
         text question_text
+        question_type_enum question_type "ENUM('multiple_choice', 'numerical')"
         varchar option_a
         varchar option_b
         varchar option_c
         varchar option_d
-        int correct_answer
-        difficulty_level difficulty "ENUM('easy', 'medium', 'hard')"
+        char correct_option "A, B, C, or D"
+        numeric numerical_answer
+        numeric answer_tolerance
         varchar category
-        int created_by FK
+        difficulty_level difficulty "ENUM('easy', 'medium', 'hard')"
+        timestamp created_at
     }
 
-    quizzes {
+    quiz_attempts {
         int id PK
-        varchar quiz_id UK
-        int user_id FK
+        int quiz_id FK
+        int student_id FK
         timestamp start_time
         timestamp end_time
+        quiz_status status "ENUM('in_progress', 'completed', 'auto_submitted', 'abandoned')"
         int score
-        quiz_status status "ENUM('in_progress', 'completed', 'auto_submitted')"
+        numeric percentage
+        int total_questions
+        int time_taken "in seconds"
+        boolean auto_submitted
         int violation_count
-    }
-
-    quiz_answers {
-        int id PK
-        varchar quiz_id FK
-        int question_id FK
-        int selected_answer
-        boolean is_correct
+        timestamp created_at
     }
 
     violations {
         int id PK
-        varchar quiz_id FK
+        int quiz_id FK
         varchar username
-        varchar violation_type
+        violation_type_enum violation_type "ENUM('TAB_SWITCH', 'COPY_ATTEMPT', etc.)"
+        text description
         severity_level severity "ENUM('INFO', 'WARNING', 'CRITICAL')"
         timestamp timestamp
+        text device_info
+        inet ip_address
     }
 
-    session_logs {
-        int id PK
-        int user_id FK
-        varchar quiz_id
-        varchar action
-        timestamp timestamp
-    }
-
-    users ||--o{ quizzes : "takes"
-    users ||--o{ questions : "creates"
-    users ||--o{ session_logs : "generates"
+    users ||--o{ quizzes_master : "creates"
+    users ||--o{ quiz_attempts : "takes"
+    users ||--o{ violations : "commits"
     
-    quizzes ||--o{ quiz_answers : "contains"
-    quizzes ||--o{ violations : "has"
+    quizzes_master ||--o{ quiz_questions : "contains"
+    quizzes_master ||--o{ quiz_attempts : "has_attempts"
     
-    questions ||--o{ quiz_answers : "is_answered_in"
+    quiz_attempts ||--o{ violations : "logs"
 
 ```
-javac -d "WebContent/WEB-INF/classes" \
--cp ".;src;WebContent/WEB-INF/classes;C:\apache-tomcat-9.0.111\lib\servlet-api.jar;WebContent/WEB-INF/lib/*" \
-src/com/quiz/models/*.java src/com/quiz/utils/*.java src/com/quiz/servlets/*.java```
+
+## Database Schema Overview
+
+### Key Relationships:
+- **Users** create **Quizzes Master** (Admin role)
+- **Users** take **Quiz Attempts** (Student role)
+- **Quizzes Master** contains **Quiz Questions** (1-to-many)
+- **Quizzes Master** has **Quiz Attempts** (1-to-many)
+- **Quiz Attempts** logs **Violations** (1-to-many)
+- **Users** commit **Violations** during quiz attempts
+
+### Custom ENUM Types:
+- `user_role`: student, admin
+- `question_type_enum`: multiple_choice, numerical
+- `difficulty_level`: easy, medium, hard
+- `quiz_status`: in_progress, completed, auto_submitted, abandoned
+- `violation_type_enum`: TAB_SWITCH, COPY_ATTEMPT, PASTE_ATTEMPT, SCREENSHOT_ATTEMPT, CONTEXT_MENU, KEYBOARD_SHORTCUT, MULTIPLE_TABS, SUSPICIOUS_BEHAVIOR
+- `severity_level`: INFO, WARNING, CRITICAL

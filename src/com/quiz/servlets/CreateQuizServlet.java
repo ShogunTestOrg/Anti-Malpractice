@@ -56,7 +56,6 @@ public class CreateQuizServlet extends HttpServlet {
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         String timeLimitStr = request.getParameter("time_limit");
-        String[] selectedQuestions = request.getParameterValues("selected_questions");
         
         // Validate input
         if (title == null || title.trim().isEmpty()) {
@@ -66,11 +65,6 @@ public class CreateQuizServlet extends HttpServlet {
         
         if (timeLimitStr == null || timeLimitStr.trim().isEmpty()) {
             response.sendRedirect("create_quiz.jsp?error=Time limit is required");
-            return;
-        }
-        
-        if (selectedQuestions == null || selectedQuestions.length == 0) {
-            response.sendRedirect("create_quiz.jsp?error=Please select at least one question");
             return;
         }
         
@@ -94,12 +88,26 @@ public class CreateQuizServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false); // Start transaction
             
+            // Get admin user ID
+            String getUserIdSql = "SELECT id FROM users WHERE username = ? AND role = 'admin'";
+            pstmt = conn.prepareStatement(getUserIdSql);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+            
+            int adminId = 1; // Default to 1 if not found
+            if (rs.next()) {
+                adminId = rs.getInt("id");
+            }
+            rs.close();
+            pstmt.close();
+            
             // Insert quiz into quizzes_master table
-            String insertQuizSql = "INSERT INTO quizzes_master (title, description, time_limit, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+            String insertQuizSql = "INSERT INTO quizzes_master (title, description, time_limit, created_by, created_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
             pstmt = conn.prepareStatement(insertQuizSql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, title.trim());
             pstmt.setString(2, description != null ? description.trim() : "");
             pstmt.setInt(3, timeLimit);
+            pstmt.setInt(4, adminId);
             
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -117,45 +125,12 @@ public class CreateQuizServlet extends HttpServlet {
             rs.close();
             pstmt.close();
             
-            // Insert questions into quiz_questions table
-            String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_id, question_text, option_a, option_b, option_c, option_d, correct_option) " +
-                                     "SELECT ?, q.id, q.question_text, q.option_a, q.option_b, q.option_c, q.option_d, " +
-                                     "CASE q.correct_answer " +
-                                     "WHEN 0 THEN 'A' " +
-                                     "WHEN 1 THEN 'B' " +
-                                     "WHEN 2 THEN 'C' " +
-                                     "WHEN 3 THEN 'D' " +
-                                     "ELSE 'A' END " +
-                                     "FROM questions q WHERE q.id = ?";
-            
-            pstmt = conn.prepareStatement(insertQuestionSql);
-            
-            for (String questionIdStr : selectedQuestions) {
-                try {
-                    int questionId = Integer.parseInt(questionIdStr);
-                    pstmt.setInt(1, quizId);
-                    pstmt.setInt(2, questionId);
-                    pstmt.addBatch();
-                } catch (NumberFormatException e) {
-                    Logger.logError("Invalid question ID: " + questionIdStr, e);
-                }
-            }
-            
-            int[] batchResults = pstmt.executeBatch();
-            int successCount = 0;
-            for (int result : batchResults) {
-                if (result > 0) successCount++;
-            }
-            
-            if (successCount == 0) {
-                throw new SQLException("Failed to add any questions to the quiz");
-            }
-            
             conn.commit(); // Commit transaction
             
-            Logger.logDebug("Quiz created successfully: " + title + " (ID: " + quizId + ") with " + successCount + " questions");
+            Logger.logDebug("Quiz created successfully: " + title + " (ID: " + quizId + ")");
             
-            response.sendRedirect("create_quiz.jsp?success=Quiz created successfully with " + successCount + " questions");
+            // Redirect to add questions page for this quiz
+            response.sendRedirect("add_question.jsp?quiz_id=" + quizId + "&success=Quiz created! Now add questions to it.");
             
         } catch (SQLException e) {
             try {

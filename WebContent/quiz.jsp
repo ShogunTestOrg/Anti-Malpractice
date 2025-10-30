@@ -27,8 +27,9 @@
     Question currentQuestion = questions.get(currentIndex);
     int totalQuestions = questions.size();
     
-    // Quiz duration in minutes
-    int quizDuration = 30;
+    // Quiz duration in minutes - get from session
+    Integer timeLimitObj = (Integer) session.getAttribute("timeLimit");
+    int quizDuration = (timeLimitObj != null) ? timeLimitObj : 30; // default to 30 if not set
     long elapsedTime = (System.currentTimeMillis() - startTime) / 1000; // in seconds
     long remainingTime = (quizDuration * 60) - elapsedTime;
 %>
@@ -367,7 +368,6 @@
         
         <form action="quiz" method="post" id="quizForm">
             <input type="hidden" name="action" value="answer">
-            <input type="hidden" name="questionId" value="<%= currentQuestion.getId() %>">
             
             <div class="question-container">
                 <div class="question-number">Question <%= currentIndex + 1 %></div>
