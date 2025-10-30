@@ -186,6 +186,22 @@
             font-size: 12px;
             font-weight: 600;
         }
+        .completed {
+            background: #1976d2;
+            color: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .auto-submitted {
+            background: #f57c00;
+            color: #fff3e0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
         .chart-container {
             margin-top: 20px;
             height: 300px;
@@ -405,7 +421,8 @@
                             conn2 = DatabaseConnection.getConnection();
                             
                             String sql2 = "SELECT qa.quiz_instance_id as quiz_id, u.username, qa.start_time, qa.status, " +
-                                         "(SELECT COUNT(*) FROM violations v WHERE v.quiz_id = qa.quiz_instance_id) as violation_count " +
+                                         "qa.violation_count, " +
+                                         "FLOOR(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - qa.start_time)) / 60) as elapsed_minutes " +
                                          "FROM quiz_attempts qa " +
                                          "JOIN users u ON qa.student_id = u.id " +
                                          "WHERE qa.status = 'in_progress' " +
@@ -421,16 +438,20 @@
                                 Timestamp startTime = rs2.getTimestamp("start_time");
                                 String status = rs2.getString("status");
                                 int violations = rs2.getInt("violation_count");
+                                int elapsedMinutes = rs2.getInt("elapsed_minutes");
                                 
                                 // Format start time
                                 SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                                 String formattedTime = sdf.format(startTime);
+                                
+                                // Format progress
+                                String progress = elapsedMinutes + " min";
                     %>
                     <tr>
                         <td><%= user %></td>
                         <td><%= qid %></td>
                         <td><%= formattedTime %></td>
-                        <td>-</td>
+                        <td><%= progress %></td>
                         <td><%= violations %></td>
                         <td><span class="active-quiz">In Progress</span></td>
                     </tr>
@@ -450,6 +471,107 @@
                                 if (rs2 != null) rs2.close();
                                 if (pstmt2 != null) pstmt2.close();
                                 if (conn2 != null) conn2.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    %>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Completed Quizzes -->
+        <div class="section">
+            <h2>Recent Completed Quizzes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Quiz ID</th>
+                        <th>Completed At</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Time Taken</th>
+                        <th>Status</th>
+                        <th>Violations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        // Query completed quiz attempts from database
+                        Connection conn3 = null;
+                        PreparedStatement pstmt3 = null;
+                        ResultSet rs3 = null;
+                        
+                        try {
+                            conn3 = DatabaseConnection.getConnection();
+                            
+                            String sql3 = "SELECT qa.quiz_instance_id, u.username, qa.end_time, " +
+                                         "qa.score, qa.percentage, qa.total_questions, qa.time_taken, " +
+                                         "qa.status, qa.violation_count, qa.auto_submitted " +
+                                         "FROM quiz_attempts qa " +
+                                         "JOIN users u ON qa.student_id = u.id " +
+                                         "WHERE qa.status IN ('completed', 'auto_submitted') " +
+                                         "ORDER BY qa.end_time DESC LIMIT 20";
+                            pstmt3 = conn3.prepareStatement(sql3);
+                            rs3 = pstmt3.executeQuery();
+                            
+                            boolean hasCompletedQuizzes = false;
+                            while (rs3.next()) {
+                                hasCompletedQuizzes = true;
+                                String qid = rs3.getString("quiz_instance_id");
+                                String user = rs3.getString("username");
+                                Timestamp endTime = rs3.getTimestamp("end_time");
+                                int score = rs3.getInt("score");
+                                double percentage = rs3.getDouble("percentage");
+                                int totalQuestions = rs3.getInt("total_questions");
+                                int timeTaken = rs3.getInt("time_taken");
+                                String status = rs3.getString("status");
+                                int violations = rs3.getInt("violation_count");
+                                boolean autoSubmitted = rs3.getBoolean("auto_submitted");
+                                
+                                // Format time
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                String formattedEndTime = endTime != null ? sdf.format(endTime) : "N/A";
+                                
+                                // Format time taken
+                                int minutes = timeTaken / 60;
+                                int seconds = timeTaken % 60;
+                                String timeTakenStr = String.format("%d:%02d", minutes, seconds);
+                                
+                                // Score display
+                                String scoreDisplay = score + "/" + totalQuestions;
+                                
+                                // Status styling
+                                String statusClass = autoSubmitted ? "auto-submitted" : "completed";
+                                String statusText = autoSubmitted ? "Auto-Submitted" : "Completed";
+                    %>
+                    <tr>
+                        <td><%= user %></td>
+                        <td><%= qid %></td>
+                        <td><%= formattedEndTime %></td>
+                        <td><%= scoreDisplay %></td>
+                        <td><%= String.format("%.1f%%", percentage) %></td>
+                        <td><%= timeTakenStr %></td>
+                        <td><span class="<%= statusClass %>"><%= statusText %></span></td>
+                        <td><%= violations %></td>
+                    </tr>
+                    <%
+                            }
+                            
+                            if (!hasCompletedQuizzes) {
+                    %>
+                    <tr><td colspan="8" class="no-data">No completed quizzes yet.</td></tr>
+                    <%
+                            }
+                        } catch (Exception e) {
+                            out.println("<tr><td colspan='8' class='no-data'>Error loading completed quizzes: " + e.getMessage() + "</td></tr>");
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (rs3 != null) rs3.close();
+                                if (pstmt3 != null) pstmt3.close();
+                                if (conn3 != null) conn3.close();
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }

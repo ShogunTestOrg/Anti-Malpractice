@@ -3,6 +3,10 @@ package com.quiz.servlets;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import com.quiz.utils.DatabaseConnection;
 import com.quiz.utils.Logger;
 
 public class ViolationServlet extends HttpServlet {
@@ -45,6 +49,19 @@ public class ViolationServlet extends HttpServlet {
         }
         violationCount++;
         session.setAttribute("violationCount", violationCount);
+        
+        // Update violation count in database
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "UPDATE quiz_attempts SET violation_count = ? WHERE quiz_instance_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, violationCount);
+                pstmt.setString(2, quizId);
+                pstmt.executeUpdate();
+                Logger.logDebug("Updated violation count to " + violationCount + " for quiz " + quizId);
+            }
+        } catch (SQLException e) {
+            Logger.logError("Failed to update violation count in database", e);
+        }
         
         // Log the violation
         Logger.logViolation(username, quizId, type, reason);

@@ -221,6 +221,24 @@ public class QuizServlet extends HttpServlet {
         System.out.println("Violation count reset to: 0");
         System.out.println("=== SESSION ATTRIBUTES RESET COMPLETE ===");
         
+        // Insert quiz attempt record into database when quiz starts
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO quiz_attempts (quiz_instance_id, quiz_id, student_id, start_time, status, total_questions, violation_count) " +
+                        "SELECT ?, ?, u.id, CURRENT_TIMESTAMP, 'in_progress', ?, 0 " +
+                        "FROM users u WHERE u.username = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, quizId);
+                pstmt.setObject(2, quizTemplateId, java.sql.Types.INTEGER); // Can be null
+                pstmt.setInt(3, questions.size());
+                pstmt.setString(4, username);
+                int rowsInserted = pstmt.executeUpdate();
+                Logger.logDebug("Quiz attempt record created: " + rowsInserted + " row(s)");
+            }
+        } catch (SQLException e) {
+            Logger.logError("Failed to insert quiz attempt record", e);
+            // Don't fail the quiz start, just log the error
+        }
+        
         response.sendRedirect("quiz.jsp");
     }
     
@@ -378,35 +396,35 @@ public class QuizServlet extends HttpServlet {
             }
         }
         
-        // Insert quiz attempt record to database
+        // Update quiz attempt record in database
         Object tmplObj = session.getAttribute("quizTemplateId");
         if (tmplObj != null) {
             try (Connection rConn = DatabaseConnection.getConnection()) {
-                // Insert into quiz_attempts for tracking
-                String insertAttemptSql = "INSERT INTO quiz_attempts (quiz_instance_id, student_id, quiz_id, score, percentage, " +
-                                        "start_time, end_time, status, total_questions) " +
-                                        "SELECT ?, u.id, ?, ?, ?, ?, CURRENT_TIMESTAMP, CAST(? AS quiz_status), ? " +
-                                        "FROM users u WHERE u.username = ?";
-                try (PreparedStatement ap = rConn.prepareStatement(insertAttemptSql)) {
+                // Update quiz_attempts with final results
+                String updateAttemptSql = "UPDATE quiz_attempts SET score = ?, percentage = ?, " +
+                                        "end_time = CURRENT_TIMESTAMP, status = CAST(? AS quiz_status), " +
+                                        "time_taken = EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - start_time))::INTEGER, " +
+                                        "violation_count = ? " +
+                                        "WHERE quiz_instance_id = ?";
+                try (PreparedStatement ap = rConn.prepareStatement(updateAttemptSql)) {
                     double percentage = questions != null && questions.size() > 0 ? 
                                       (double) score / questions.size() * 100 : 0.0;
                     String status = "true".equals(autoSubmit) ? "auto_submitted" : "completed";
-                    Long startTime = (Long) session.getAttribute(ATTR_START_TIME);
+                    Integer violationCount = (Integer) session.getAttribute("violationCount");
+                    if (violationCount == null) violationCount = 0;
                     
-                    ap.setString(1, quizId);  // quiz_instance_id like "QUIZ-1761797380480"
-                    ap.setInt(2, (Integer) tmplObj);  // quiz_id (template reference)
-                    ap.setInt(3, score);
-                    ap.setDouble(4, percentage);
-                    ap.setTimestamp(5, new Timestamp(startTime != null ? startTime : System.currentTimeMillis()));
-                    ap.setString(6, status);
-                    ap.setInt(7, questions != null ? questions.size() : 0);
-                    ap.setString(8, username);
+                    ap.setInt(1, score);
+                    ap.setDouble(2, percentage);
+                    ap.setString(3, status);
+                    ap.setInt(4, violationCount);
+                    ap.setString(5, quizId);  // quiz_instance_id like "QUIZ-1761797380480"
                     
                     int rows = ap.executeUpdate();
-                    System.out.println("[INFO] Quiz " + status + ": " + quizId + " for user: " + username + " with score: " + score + "/" + questions.size());
+                    System.out.println("[INFO] Quiz " + status + ": " + quizId + " for user: " + username + " with score: " + score + "/" + 
+                                     (questions != null ? questions.size() : 0) + " (violations: " + violationCount + ")");
                 }
             } catch (SQLException e) {
-                System.err.println("[ERROR] Failed to insert quiz attempt record: " + e.getMessage());
+                System.err.println("[ERROR] Failed to update quiz attempt record: " + e.getMessage());
                 e.printStackTrace();
             }
         }
